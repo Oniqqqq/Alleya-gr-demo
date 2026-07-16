@@ -29,11 +29,28 @@ function ScrollReset() {
 }
 
 function App() {
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+      document.documentElement.style.setProperty('--mouse-x-pct', `${e.clientX / window.innerWidth}`);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <>
       {/* Print grid background */}
       <div className="print-bg">
         <img className="bg" src={`${import.meta.env.BASE_URL}print.svg`} alt="" />
+        <div 
+          className="print-glow-lines" 
+          style={{
+            maskImage: `url(${import.meta.env.BASE_URL}print.svg)`,
+            WebkitMaskImage: `url(${import.meta.env.BASE_URL}print.svg)`
+          }}
+        />
         <img className="static" src={`${import.meta.env.BASE_URL}print-static.svg`} alt="" />
       </div>
 

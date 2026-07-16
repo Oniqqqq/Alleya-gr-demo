@@ -313,15 +313,56 @@ button { font-family: inherit; }
   z-index: -1;
   pointer-events: none;
 }
+/* Очень мягкое рассеянное тепло на белом фоне (минимальное, чтобы не окрашивать фон) */
+.print-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    400rem circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+    rgba(232, 40, 43, 0.015) 0%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+/* Ярко выраженное металлическое свечение (раскаленная нить) строго по линиям сетки */
+.print-glow-lines {
+  position: absolute;
+  inset: 0;
+  
+  /* Фирменные цвета глоу */
+  --glow-red: #ff3337;
+  --glow-blue: #2a5dff; /* Насыщенный металлический синий */
+  
+  /* Интерактивный переход цвета: слева красный, справа синий */
+  --dynamic-glow: color-mix(in srgb, var(--glow-blue) calc(var(--mouse-x-pct, 0.5) * 100%), var(--glow-red));
+  
+  background: radial-gradient(
+    250rem circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+    #ffffff 0%,                      /* Белое ядро накала */
+    var(--dynamic-glow) 25%,         /* Динамический цвет */
+    rgba(255, 255, 255, 0.2) 60%,
+    transparent 100%
+  );
+  mask-size: cover;
+  -webkit-mask-size: cover;
+  pointer-events: none;
+  z-index: 2;
+  /* Мягкий неоновый ореол */
+  filter: blur(1.2px);
+  opacity: 0.95;
+}
 .print-bg img.bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  mask-image: radial-gradient(circle at 0 0, #fff 0, rgba(255,255,255,0) 20%);
-  -webkit-mask-image: radial-gradient(circle at 0 0, #fff 0, rgba(255,255,255,0) 20%);
-  opacity: 0.4;
+  /* Убрана маска-затухание, чтобы сетка была равномерно выражена по всей странице */
+  opacity: 0.15;
+  /* Фильтр для усиления металлического контраста */
+  filter: contrast(1.25) brightness(0.9);
 }
 .print-bg img.static {
   position: absolute;
@@ -329,7 +370,7 @@ button { font-family: inherit; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.05;
+  opacity: 0.04;
 }
 
 /* Custom Cursor */
