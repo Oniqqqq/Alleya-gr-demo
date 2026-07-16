@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1060" viewBox="0 0 800 1060">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1060" fill="url(#g)"/>
+  <rect y="763.1999999999999" width="800" height="296.8" fill="url(#floor)"/>
+  <ellipse cx="400" cy="826.8000000000001" rx="240" ry="21.2" fill="#000" opacity="0.35"/>
+  <g transform="translate(52.17391304347825 139.77391304347825) scale(1.7391304347826086)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="176" y="70" width="48" height="24" rx="4"/>
+      <path d="M182 94 L182 118 Q142 140 142 178 L142 322 Q142 334 154 334 L246 334 Q258 334 258 322 L258 178 Q258 140 218 118 L218 94"/>
+      <rect x="158" y="196" width="84" height="96" rx="6" stroke="#5c5c5c"/>
+      <path d="M170 224 L230 224 M170 244 L230 244 M170 264 L206 264" stroke="#5c5c5c"/>
+    </g>
+    <circle cx="200" cy="82" r="4" fill="#c496ff"/></g>
+  <text x="48" y="985.8000000000001" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="22" letter-spacing="2" fill="#7d7d7d">МОТОРНЫЕ МАСЛА</text>
+  <text x="48" y="1022.9" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="16" letter-spacing="1.5" fill="#565656">ФЛАКОН · 1 Л</text>
+</svg>

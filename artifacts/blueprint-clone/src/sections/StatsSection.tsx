@@ -1,11 +1,5 @@
 import { useEffect, useRef } from 'react';
-
-const STATS = [
-  { number: '<5%', desc: 'Acceptance rate into our CTO vetted network' },
-  { number: '94%', desc: 'Developer retention on client teams for 2.5+ years (avg tenure w/ Blueprint = 6 years)' },
-  { number: '84%', desc: 'Contract-to-hire engineers convert to full time' },
-  { number: '86%', desc: 'Staff Augmentation Clients renew after the initial 6 month engagement' },
-];
+import { STATS } from '../data/stats';
 
 export default function StatsSection() {
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -32,10 +26,12 @@ export default function StatsSection() {
   return (
     <section className="stats-section">
       <div className="stats-left">
-        <div className="small-title">The model works</div>
+        <div className="small-title">Инфраструктура</div>
         <div ref={titleRef} className="smart-text">
           <h2 className="h2 stats-subtitle">
-            <span className="line"><span className="text">Here's the proof.</span></span>
+            <span className="line"><span className="text">Масштаб,</span></span>
+            <span className="line"><span className="text">подтверждённый</span></span>
+            <span className="line"><span className="text">инфраструктурой</span></span>
           </h2>
         </div>
       </div>
@@ -48,8 +44,8 @@ export default function StatsSection() {
             ref={(el) => { itemRefs.current[i] = el; }}
             style={{ transitionDelay: `${i * 0.08}s` }}
           >
-            <span className="super stat-number">{stat.number}</span>
-            <p className="h4 stat-desc">{stat.desc}</p>
+            <span className="super stat-number">{stat.value}</span>
+            <p className="h4 stat-desc">{stat.label}</p>
           </div>
         ))}
       </div>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#g)"/>
+  <rect y="720" width="800" height="280" fill="url(#floor)"/>
+  <ellipse cx="400" cy="780" rx="240" ry="20" fill="#000" opacity="0.35"/>
+  <g transform="translate(52.17391304347825 112.17391304347825) scale(1.7391304347826086)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3" stroke-linejoin="round">
+      <path d="M84 336 L84 96 M200 336 L200 96 M316 336 L316 96"/>
+      <path d="M84 176 L316 176 M84 256 L316 256 M84 336 L316 336"/>
+      <rect x="104" y="130" width="36" height="46" stroke="#5c5c5c"/>
+      <rect x="148" y="142" width="30" height="34" stroke="#5c5c5c"/>
+      <rect x="222" y="124" width="42" height="52" stroke="#5c5c5c"/>
+      <rect x="112" y="214" width="40" height="42" stroke="#5c5c5c"/>
+      <rect x="238" y="206" width="34" height="50" stroke="#5c5c5c"/>
+      <rect x="106" y="292" width="48" height="44" stroke="#5c5c5c"/>
+      <rect x="216" y="300" width="38" height="36" stroke="#5c5c5c"/>
+    </g>
+    <circle cx="284" cy="150" r="4" fill="#c496ff"/></g>
+  <text x="48" y="930" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="22" letter-spacing="2" fill="#7d7d7d">ИНФРАСТРУКТУРА</text>
+  <text x="48" y="965" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="16" letter-spacing="1.5" fill="#565656">СКЛАДСКОЙ КОМПЛЕКС</text>
+</svg>

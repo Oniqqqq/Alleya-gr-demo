@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#g)"/>
+  <rect y="720" width="800" height="280" fill="url(#floor)"/>
+  <ellipse cx="400" cy="780" rx="240" ry="20" fill="#000" opacity="0.35"/>
+  <g transform="translate(52.17391304347825 112.17391304347825) scale(1.7391304347826086)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3" stroke-linecap="round">
+      <ellipse cx="200" cy="110" rx="88" ry="24"/>
+      <path d="M112 110 L112 310 M288 110 L288 310"/>
+      <path d="M112 310 Q112 334 200 334 Q288 334 288 310"/>
+      <path d="M112 165 Q112 189 200 189 Q288 189 288 165" stroke="#5c5c5c"/>
+      <path d="M112 245 Q112 269 200 269 Q288 269 288 245" stroke="#5c5c5c"/>
+      <ellipse cx="172" cy="106" rx="12" ry="5"/>
+    </g>
+    <circle cx="236" cy="108" r="4" fill="#a1d8c0"/></g>
+  <text x="48" y="930" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="22" letter-spacing="2" fill="#7d7d7d">ПРОМЫШЛЕННЫЕ МАСЛА</text>
+  <text x="48" y="965" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="16" letter-spacing="1.5" fill="#565656">БОЧКА · 200 Л</text>
+</svg>

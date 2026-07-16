@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <rect y="648" width="1200" height="252.00000000000003" fill="url(#floor)"/>
+  <ellipse cx="600" cy="702" rx="360" ry="18" fill="#000" opacity="0.35"/>
+  <g transform="translate(208.69565217391306 22.69565217391306) scale(1.9565217391304348)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="96" y="150" width="208" height="150" rx="10"/>
+      <path d="M96 196 L304 196" stroke="#5c5c5c"/>
+      <rect x="122" y="122" width="34" height="28" rx="4"/>
+      <rect x="244" y="122" width="34" height="28" rx="4"/>
+      <path d="M129 108 L149 108 M139 98 L139 118"/>
+      <path d="M251 108 L271 108"/>
+      <path d="M120 232 L152 232 M120 252 L168 252" stroke="#5c5c5c"/>
+    </g>
+    <circle cx="286" cy="284" r="4" fill="#a1d8c0"/></g>
+  <text x="72" y="837" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="34" letter-spacing="2" fill="#7d7d7d">ЭНЕРГЕТИКА</text>
+  <text x="72" y="868.5" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="24" letter-spacing="1.5" fill="#565656">СТАРТЕРНЫЕ БАТАРЕИ</text>
+</svg>

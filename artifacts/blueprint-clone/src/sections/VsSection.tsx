@@ -2,32 +2,32 @@ import { useEffect, useRef } from 'react';
 
 const VS_ROWS = [
   {
-    feature: 'CTO-Led Vetting',
+    feature: 'Портфель брендов\nпод единым управлением',
     blueprint: true,
-    agencies: 'No',
-    marketplaces: 'No',
-    portals: 'No',
+    agencies: 'Нет',
+    marketplaces: 'Нет',
+    portals: 'Нет',
   },
   {
-    feature: 'We handle all upfront vetting.\nYou only meet the top 1–2 candidates',
+    feature: 'Складская программа\nи стабильные поставки',
     blueprint: true,
-    agencies: 'No',
-    marketplaces: 'No',
-    portals: 'No',
+    agencies: 'Иногда',
+    marketplaces: 'Нет',
+    portals: 'Иногда',
   },
   {
-    feature: 'Staff Level Engineers',
+    feature: 'Поддержка продаж\nи маркетинг для партнёров',
     blueprint: true,
-    agencies: 'Sometimes',
-    marketplaces: 'Sometimes',
-    portals: 'Sometimes',
+    agencies: 'Нет',
+    marketplaces: 'Нет',
+    portals: 'Нет',
   },
   {
-    feature: 'Flexible Hiring Models',
+    feature: 'Региональная сеть\nи сервисное сопровождение',
     blueprint: true,
-    agencies: 'No',
-    marketplaces: 'No',
-    portals: 'No',
+    agencies: 'Иногда',
+    marketplaces: 'Нет',
+    portals: 'Нет',
   },
 ];
 
@@ -60,8 +60,8 @@ export default function VsSection() {
     <section className="vs-section">
       <div ref={titleRef} className="smart-text vs-title">
         <h2 className="h2">
-          <span className="line"><span className="text">Blueprint VS</span></span>
-          <span className="line"><span className="text">Traditional Hiring</span></span>
+          <span className="line"><span className="text">Аллея Групп и</span></span>
+          <span className="line"><span className="text">обычная дистрибуция</span></span>
         </h2>
       </div>
 
@@ -70,18 +70,18 @@ export default function VsSection() {
         <div className="vs-thead">
           <div className="vs-tr">
             <div className="vs-th" />
-            <div className="vs-th">Blueprint</div>
+            <div className="vs-th">Аллея Групп</div>
             <div className="vs-th">
-              Dev Agencies<br />
-              <span style={{ color: 'var(--muted)', fontSize: '12rem' }}>(Encora, BairesDev)</span>
+              Дистрибьюторы<br />
+              <span style={{ color: 'var(--muted)', fontSize: '12rem' }}>(мультибрендовые склады)</span>
             </div>
             <div className="vs-th">
-              Marketplace<br />
-              <span style={{ color: 'var(--muted)', fontSize: '12rem' }}>(TopTal, Upwork)</span>
+              Маркетплейсы<br />
+              <span style={{ color: 'var(--muted)', fontSize: '12rem' }}>(онлайн-каталоги)</span>
             </div>
             <div className="vs-th">
-              Hiring Portals<br />
-              <span style={{ color: 'var(--muted)', fontSize: '12rem' }}>(ZipRecruiter, Monster)</span>
+              Прямой импорт<br />
+              <span style={{ color: 'var(--muted)', fontSize: '12rem' }}>(разовые закупки)</span>
             </div>
           </div>
         </div>

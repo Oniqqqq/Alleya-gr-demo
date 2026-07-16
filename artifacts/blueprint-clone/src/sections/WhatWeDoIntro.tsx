@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 
-const INTRO_TEXT = "Hiring senior mobile devs shouldn't feel uncertain. Blueprint makes it clear. Through expert screening, matched talent, flexible models, and long-term fit, we make every hire count.";
+const INTRO_TEXT =
+  'Сильный бренд — только начало. Масштаб создают стабильные поставки, развитая логистика, присутствие в регионах и системная поддержка партнёров. Аллея Групп объединяет эти возможности в одном портфеле.';
 
 export default function WhatWeDoIntro() {
   const wordsRef = useRef<HTMLSpanElement[]>([]);
@@ -30,8 +31,8 @@ export default function WhatWeDoIntro() {
   const words = INTRO_TEXT.split(' ');
 
   return (
-    <section className="what-we-do-intro" ref={sectionRef}>
-      <div className="small-title">What we do</div>
+    <section className="what-we-do-intro" id="about" ref={sectionRef}>
+      <div className="small-title">О компании</div>
 
       <p
         className="h1 intro-description"

@@ -1,29 +1,30 @@
 import { useEffect, useRef, useState } from 'react';
+import { img } from '../data/assets';
 
 const STEPS = [
   {
-    title: 'Screen for Skill & Fit',
-    titleSub: 'CTO-screened engineers',
-    subtitle: 'Vetted for skill, communication, timezone fit, and values.',
-    image: 'https://blueprint.cdn.prismic.io/blueprint/aXgikgIvOtkhB9v4_Talent_Card.svg?auto=format&fit=max&w=800',
+    title: 'Портфель брендов',
+    titleSub: 'Единая система развития',
+    subtitle: 'Собственные и партнёрские бренды под общими стандартами качества.',
+    image: img('infra-packaging.svg'),
   },
   {
-    title: 'Simplify Selection',
-    titleSub: 'Only top matches',
-    subtitle: 'You meet just 1–2 engineers, pre-vetted for fit.',
-    image: 'https://images.prismic.io/blueprint/aOSNoJ5xUNkB1qaw_2.png?auto=format&fit=max&w=800',
+    title: 'Поставки и логистика',
+    titleSub: 'Стабильные отгрузки',
+    subtitle: 'Распределительные центры и магистральные перевозки по всей стране.',
+    image: img('wide-truck.svg'),
   },
   {
-    title: 'Staff Smart—Scale Fast',
-    titleSub: 'Flexible Staffing Options',
-    subtitle: 'Staff Aug or Contract-to-Hire. 84% convert.',
-    image: 'https://images.prismic.io/blueprint/aOSNn55xUNkB1qau_3.png?auto=format&fit=max&w=800',
+    title: 'Региональная сеть',
+    titleSub: 'Филиалы и дилеры',
+    subtitle: 'Присутствие в регионах: филиалы, дилерские центры, партнёры.',
+    image: img('wide-network.svg'),
   },
   {
-    title: 'Proven Partner',
-    titleSub: 'Retention',
-    subtitle: '94% engineer retention. 86% client renewal.',
-    image: 'https://images.prismic.io/blueprint/aOSNnp5xUNkB1qat_4.png?auto=format&fit=max&w=800',
+    title: 'Поддержка партнёров',
+    titleSub: 'Сопровождение продаж',
+    subtitle: 'Маркетинг, обучение и сервисная поддержка на каждом этапе.',
+    image: img('wide-service.svg'),
   },
 ];
 

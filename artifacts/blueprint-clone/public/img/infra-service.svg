@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="900" viewBox="0 0 800 900">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="900" fill="url(#g)"/>
+  <rect y="648" width="800" height="252.00000000000003" fill="url(#floor)"/>
+  <ellipse cx="400" cy="702" rx="240" ry="18" fill="#000" opacity="0.35"/>
+  <g transform="translate(52.17391304347825 66.17391304347825) scale(1.7391304347826086)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M254 106 A54 54 0 1 0 294 146 L232 208 L192 168 Z" transform="rotate(45 240 160)"/>
+      <path d="M150 250 L110 290 Q98 302 110 314 Q122 326 134 314 L174 274" />
+      <circle cx="212" cy="212" r="90" stroke="#5c5c5c" stroke-dasharray="4 10"/>
+    </g>
+    <circle cx="122" cy="302" r="4" fill="#a1d8c0"/></g>
+  <text x="48" y="837" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="22" letter-spacing="2" fill="#7d7d7d">СЕРВИС</text>
+  <text x="48" y="868.5" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="16" letter-spacing="1.5" fill="#565656">СЕРВИСНОЕ ОБСЛУЖИВАНИЕ</text>
+</svg>

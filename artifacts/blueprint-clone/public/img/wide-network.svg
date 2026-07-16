@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <rect y="648" width="1200" height="252.00000000000003" fill="url(#floor)"/>
+  <ellipse cx="600" cy="702" rx="360" ry="18" fill="#000" opacity="0.35"/>
+  <g transform="translate(208.69565217391306 22.69565217391306) scale(1.9565217391304348)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3" stroke-linecap="round">
+      <path d="M110 130 L200 180 L290 120 M200 180 L150 280 M200 180 L268 258 M150 280 L268 258" stroke="#5c5c5c"/>
+      <circle cx="110" cy="130" r="12"/>
+      <circle cx="290" cy="120" r="12"/>
+      <circle cx="200" cy="180" r="16" stroke="#c496ff"/>
+      <circle cx="150" cy="280" r="12"/>
+      <circle cx="268" cy="258" r="12"/>
+      <circle cx="200" cy="180" r="5" fill="#c496ff" stroke="none"/>
+    </g></g>
+  <text x="72" y="837" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="34" letter-spacing="2" fill="#7d7d7d">ГЕОГРАФИЯ</text>
+  <text x="72" y="868.5" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="24" letter-spacing="1.5" fill="#565656">РЕГИОНАЛЬНАЯ СЕТЬ</text>
+</svg>

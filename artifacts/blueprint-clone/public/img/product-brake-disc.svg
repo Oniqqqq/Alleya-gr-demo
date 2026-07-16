@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="860" viewBox="0 0 800 860">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="860" fill="url(#g)"/>
+  <rect y="619.1999999999999" width="800" height="240.8" fill="url(#floor)"/>
+  <ellipse cx="400" cy="670.8000000000001" rx="240" ry="17.2" fill="#000" opacity="0.35"/>
+  <g transform="translate(52.17391304347825 47.77391304347825) scale(1.7391304347826086)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3">
+      <circle cx="200" cy="205" r="128"/>
+      <circle cx="200" cy="205" r="94" stroke="#5c5c5c"/>
+      <circle cx="200" cy="205" r="52"/>
+      <circle cx="200" cy="205" r="20"/>
+      <circle cx="200" cy="139" r="8"/><circle cx="263" cy="185" r="8"/><circle cx="239" cy="259" r="8"/><circle cx="161" cy="259" r="8"/><circle cx="137" cy="185" r="8"/>
+      <path d="M200 77 A128 128 0 0 1 328 205" stroke="#c496ff" stroke-width="2"/>
+    </g></g>
+  <text x="48" y="799.8000000000001" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="22" letter-spacing="2" fill="#7d7d7d">АВТОКОМПОНЕНТЫ</text>
+  <text x="48" y="829.9" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="16" letter-spacing="1.5" fill="#565656">ТОРМОЗНОЙ ДИСК</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="760" viewBox="0 0 800 760">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="760" fill="url(#g)"/>
+  <rect y="547.1999999999999" width="800" height="212.8" fill="url(#floor)"/>
+  <ellipse cx="400" cy="592.8000000000001" rx="240" ry="15.200000000000001" fill="#000" opacity="0.35"/>
+  <g transform="translate(69.56521739130437 19.16521739130437) scale(1.6521739130434783)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="96" y="150" width="208" height="150" rx="10"/>
+      <path d="M96 196 L304 196" stroke="#5c5c5c"/>
+      <rect x="122" y="122" width="34" height="28" rx="4"/>
+      <rect x="244" y="122" width="34" height="28" rx="4"/>
+      <path d="M129 108 L149 108 M139 98 L139 118"/>
+      <path d="M251 108 L271 108"/>
+      <path d="M120 232 L152 232 M120 252 L168 252" stroke="#5c5c5c"/>
+    </g>
+    <circle cx="286" cy="284" r="4" fill="#a1d8c0"/></g>
+  <text x="48" y="706.8000000000001" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="22" letter-spacing="2" fill="#7d7d7d">АККУМУЛЯТОРЫ</text>
+  <text x="48" y="733.4" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="16" letter-spacing="1.5" fill="#565656">АКБ · 60 А·Ч</text>
+</svg>

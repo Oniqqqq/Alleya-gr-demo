@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="940" viewBox="0 0 800 940">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="940" fill="url(#g)"/>
+  <rect y="676.8" width="800" height="263.20000000000005" fill="url(#floor)"/>
+  <ellipse cx="400" cy="733.2" rx="240" ry="18.8" fill="#000" opacity="0.35"/>
+  <g transform="translate(52.17391304347825 84.57391304347826) scale(1.7391304347826086)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3" stroke-linecap="round">
+      <ellipse cx="200" cy="120" rx="70" ry="18"/>
+      <path d="M130 120 L130 280 M270 120 L270 280"/>
+      <path d="M130 280 Q130 298 200 298 Q270 298 270 280"/>
+      <path d="M148 130 L148 284 M174 136 L174 292 M200 138 L200 294 M226 136 L226 292 M252 130 L252 284" stroke="#5c5c5c"/>
+      <ellipse cx="200" cy="112" rx="34" ry="9"/>
+      <path d="M200 298 L200 330 M180 316 L220 316"/>
+    </g>
+    <circle cx="200" cy="112" r="4" fill="#a1d8c0"/></g>
+  <text x="48" y="874.2" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="22" letter-spacing="2" fill="#7d7d7d">ФИЛЬТРЫ</text>
+  <text x="48" y="907.1" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="16" letter-spacing="1.5" fill="#565656">МАСЛЯНЫЙ ФИЛЬТР</text>
+</svg>

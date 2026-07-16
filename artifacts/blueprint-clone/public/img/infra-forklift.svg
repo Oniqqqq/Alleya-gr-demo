@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="18%" r="90%">
+      <stop offset="0%" stop-color="#333331"/>
+      <stop offset="55%" stop-color="#262624"/>
+      <stop offset="100%" stop-color="#1d1d1c"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#g)"/>
+  <rect y="720" width="800" height="280" fill="url(#floor)"/>
+  <ellipse cx="400" cy="780" rx="240" ry="20" fill="#000" opacity="0.35"/>
+  <g transform="translate(52.17391304347825 112.17391304347825) scale(1.7391304347826086)">
+    <g fill="none" stroke="#9a9a9a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M120 272 L120 160 Q120 148 132 148 L196 148 L216 208 L216 272"/>
+      <path d="M138 148 L138 120 L196 120 L196 148" stroke="#5c5c5c"/>
+      <circle cx="152" cy="290" r="26"/>
+      <circle cx="248" cy="292" r="20"/>
+      <path d="M216 240 L268 240 L268 272"/>
+      <path d="M282 120 L282 300 L344 300"/>
+      <path d="M296 120 L296 288" stroke="#5c5c5c"/>
+    </g>
+    <circle cx="167" cy="167" r="4" fill="#a1d8c0"/></g>
+  <text x="48" y="930" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="22" letter-spacing="2" fill="#7d7d7d">ЛОГИСТИКА</text>
+  <text x="48" y="965" font-family="ui-monospace, 'JetBrains Mono', monospace" font-size="16" letter-spacing="1.5" fill="#565656">СКЛАДСКАЯ ТЕХНИКА</text>
+</svg>

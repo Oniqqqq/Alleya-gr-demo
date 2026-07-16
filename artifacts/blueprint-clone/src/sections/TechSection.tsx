@@ -1,37 +1,40 @@
 import { useEffect, useRef } from 'react';
+import Pictogram from '../components/Pictogram';
 
 const TECH_ROWS = [
   {
-    label: 'Native',
+    label: 'Транспорт',
     platforms: [
       {
-        name: 'iOS',
+        name: 'Легковой',
         items: [
-          { label: 'Swift', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7j55xUNkB13fD_Swift.svg' },
-          { label: 'Objective-C', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7jZ5xUNkB13fB_OBJ-C.svg' },
+          { label: 'Масла', icon: 'car' },
+          { label: 'Жидкости', icon: 'car' },
+          { label: 'Фильтры', icon: 'car' },
+          { label: 'АКБ', icon: 'car' },
         ],
       },
       {
-        name: 'Android',
+        name: 'Коммерческий',
         items: [
-          { label: 'Kotlin', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7jJ5xUNkB13fA_Kotlin.svg' },
-          { label: 'Java', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7ip5xUNkB13e-_Java.svg' },
+          { label: 'Масла HD', icon: 'truck' },
+          { label: 'Компоненты', icon: 'truck' },
         ],
       },
     ],
   },
   {
-    label: 'Hybrid',
+    label: 'Промышленность и сервис',
     platforms: [
       {
         name: '',
         items: [
-          { label: 'Flutter', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7iZ5xUNkB13e9_Flutter.svg' },
-          { label: 'Dart', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7iJ5xUNkB13e8_Dart.svg' },
-          { label: 'React Native', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7jp5xUNkB13fC_React_Native.svg' },
-          { label: 'TypeScript', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7kJ5xUNkB13fE_Typescript.svg' },
-          { label: 'Kotlin', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7jJ5xUNkB13fA_Kotlin.svg' },
-          { label: 'JavaScript', icon: 'https://blueprint.cdn.prismic.io/blueprint/aOx7i55xUNkB13e__JavaScript.svg' },
+          { label: 'СОЖ', icon: 'factory' },
+          { label: 'Гидравлика', icon: 'factory' },
+          { label: 'Спецтехника', icon: 'excavator' },
+          { label: 'Оборудование', icon: 'machine' },
+          { label: 'Автохимия', icon: 'wrench' },
+          { label: 'Сервис СТО', icon: 'wrench' },
         ],
       },
     ],
@@ -64,11 +67,11 @@ export default function TechSection() {
   return (
     <section className="tech-section">
       <div className="tech-left">
-        <div className="small-title">Our technologies</div>
+        <div className="small-title">Товарные направления</div>
         <div ref={titleRef} className="smart-text">
           <h2 className="h2 tech-subtitle">
-            <span className="line"><span className="text">Mobile is all we do —</span></span>
-            <span className="line"><span className="text">native or hybrid.</span></span>
+            <span className="line"><span className="text">От транспорта</span></span>
+            <span className="line"><span className="text">до производства.</span></span>
           </h2>
         </div>
       </div>
@@ -101,8 +104,8 @@ export default function TechSection() {
                         ref={(el) => { itemRefs.current[itemIndex++] = el; }}
                         style={{ transitionDelay: `${ii * 0.06}s` }}
                       >
-                        <div className="tech-item-icon">
-                          <img src={item.icon} alt={item.label} loading="lazy" />
+                        <div className="tech-item-icon" style={{ color: 'var(--muted)' }}>
+                          <Pictogram icon={item.icon} size="100%" />
                         </div>
                         <span className="tech-item-label">{item.label}</span>
                       </div>
