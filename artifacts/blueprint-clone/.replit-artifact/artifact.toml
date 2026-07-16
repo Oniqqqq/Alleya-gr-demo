@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/blueprint-clone/"
+title = "Blueprint Apps Clone"
+version = "1.0.0"
+id = "artifacts/blueprint-clone"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/blueprint-clone/" ]
+localPort = 22851
+
+[services.development]
+run = "pnpm --filter @workspace/blueprint-clone run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/blueprint-clone", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/blueprint-clone/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22851"
+BASE_PATH = "/blueprint-clone/"
