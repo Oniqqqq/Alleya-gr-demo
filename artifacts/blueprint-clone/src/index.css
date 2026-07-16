@@ -315,8 +315,9 @@ button { font-family: inherit; }
 .hero {
   height: 1620rem;
   position: relative;
-  overflow-x: clip;
+  overflow: clip;          /* prevent photos from overflowing into next section */
   width: 100vw;
+  isolation: isolate;      /* contain z-index stacking within hero */
 }
 .hero-items {
   position: absolute;
