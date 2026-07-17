@@ -12,19 +12,40 @@ export default function WhatWeDoIntro() {
       if (!sectionRef.current) return;
       const rect = sectionRef.current.getBoundingClientRect();
       const viewH = window.innerHeight;
-      // Progress: 0 when section top hits viewport, 1 when section bottom leaves
-      const progress = 1 - rect.bottom / (viewH + rect.height);
-      const litCount = Math.floor(progress * wordsRef.current.length * 2);
+
+      // Окно активности эффекта: начинается, когда секция на 85% высоты экрана (снизу)
+      // и завершается полностью, когда она поднимается до 20% высоты (вверху)
+      const start = viewH * 0.85;
+      const end = viewH * 0.20;
+
+      const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+      const total = wordsRef.current.length;
 
       wordsRef.current.forEach((word, i) => {
-        if (word) {
-          word.style.opacity = i < litCount ? '1' : '0.07';
+        if (!word) return;
+
+        // Поэтапное распределение появления каждого слова
+        const wordStart = (i / total) * 0.80; // 80% диапазона скролла отдано на слова
+        const wordEnd = wordStart + 0.18;     // наложение фаз появления соседних слов
+
+        let wordProgress = 0;
+        if (progress > wordStart) {
+          wordProgress = Math.min(1, (progress - wordStart) / (wordEnd - wordStart));
         }
+
+        // Применяем плавную функцию кубического Безье (easeInOutCubic) для Apple-эффекта
+        const ease = wordProgress < 0.5
+          ? 4 * wordProgress * wordProgress * wordProgress
+          : 1 - Math.pow(-2 * wordProgress + 2, 3) / 2;
+
+        const opacity = 0.08 + ease * 0.92;
+        word.style.opacity = opacity.toFixed(3);
       });
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
@@ -33,22 +54,18 @@ export default function WhatWeDoIntro() {
   return (
     <section className="what-we-do-intro" id="about" ref={sectionRef}>
       <div className="small-title">О компании</div>
-
-      <p
-        className="h1 intro-description"
-        style={{ lineHeight: 0.95, letterSpacing: '-0.03em' }}
-      >
+      <p className="intro-description">
         {words.map((word, i) => (
           <span
             key={i}
             ref={(el) => { if (el) wordsRef.current[i] = el; }}
+            className="word"
             style={{
-              opacity: 0.07,
-              transition: 'opacity 0.4s ease',
-              display: 'inline',
+              opacity: 0.08,
+              whiteSpace: 'nowrap',
             }}
           >
-            {word}{' '}
+            {word}
           </span>
         ))}
       </p>
