@@ -13,21 +13,21 @@ interface HeroPhoto {
 
 const PHOTOS: HeroPhoto[] = [
   {
-    url: img('hero-liquimoly.png'),
+    url: img('lm-racing.jpg'),
     scrollSpeed: 100, baseX: 308, baseY: -32, width: 300,
     caption: { name: 'LIQUI MOLY', desc: '<strong>Моторные масла и автохимия</strong> — легендарный немецкий бренд.' },
   },
   {
-    url: img('hero-bizol.png'),
-    scrollSpeed: 400, baseX: 1028, baseY: -2, width: 220,
+    url: img('bizol-pour.jpg'),
+    scrollSpeed: 400, baseX: 1160, baseY: -2, width: 220,
   },
   {
     url: img('hero-reinwell.png'),
-    scrollSpeed: 50, baseX: 1186, baseY: 205, width: 240,
+    scrollSpeed: 50, baseX: 1360, baseY: 205, width: 240,
     caption: { name: 'ReinWell', desc: 'Немецкий контроль качества, локализованное производство' },
   },
   {
-    url: img('hero-lopal.png'),
+    url: img('meguin-drum.jpg'),
     scrollSpeed: 250, baseX: -16, baseY: 158, width: 220,
   },
   {
@@ -36,21 +36,21 @@ const PHOTOS: HeroPhoto[] = [
     caption: { name: 'RUSEFF', desc: '<strong>Автохимия и автокосметика</strong>, созданная для российских условий' },
   },
   {
-    url: img('hero-portfolio.png'),
-    scrollSpeed: 25, baseX: 862, baseY: 609, width: 340,
+    url: img('alleya-stand.jpg'),
+    scrollSpeed: 25, baseX: 1220, baseY: 660, width: 340, /* Сдвинуто правее и ниже, чтобы не перекрывать Reinwell */
   },
   {
     url: img('hero-lubex.png'),
     scrollSpeed: 325, baseX: 237, baseY: 706, width: 260,
   },
   {
-    url: img('infra-warehouse.svg'),
+    url: img('production-line.jpg'),
     scrollSpeed: 90, baseX: 593, baseY: 965, width: 300,
-    caption: { name: '11 филиалов', desc: '<strong>Работа по всей территории РФ</strong> — собственная филиальная сеть' },
+    caption: { name: 'Производство', desc: '<strong>Современные линии розлива</strong> и контроль качества продукции' },
   },
   {
-    url: img('hero-reinwell-spray.png'),
-    scrollSpeed: 250, baseX: 1107, baseY: 1050, width: 200,
+    url: img('hero-portfolio.png'),
+    scrollSpeed: 250, baseX: 1260, baseY: 1050, width: 200,
   },
 ];
 
@@ -80,6 +80,28 @@ const prefersReducedMotion = () =>
 const DESIGN_WIDTH = 1728;
 const posScale = () => Math.min(1, window.innerWidth / DESIGN_WIDTH);
 
+/** Не даём карточкам выходить за правый/левый край вьюпорта */
+function clampPhotoX(baseX: number, widthPx: number, scale: number): number {
+  const x = baseX * scale;
+  const maxX = window.innerWidth - widthPx;
+  return Math.min(Math.max(x, -widthPx * 0.08), Math.max(0, maxX));
+}
+
+function photoTransform(
+  baseX: number,
+  baseY: number,
+  widthPx: number,
+  scale: number,
+  yOffset = 0,
+  scaleVal = 1,
+) {
+  const x = clampPhotoX(baseX, widthPx, scale);
+  const y = baseY * scale + yOffset;
+  return scaleVal === 1
+    ? `translate3d(${x}px,${y}px,0)`
+    : `translate3d(${x}px,${y}px,0) scale(${scaleVal})`;
+}
+
 export default function Hero() {
   const itemRefs    = useRef<(HTMLDivElement | null)[]>([]);
   const titleWrap   = useRef<HTMLDivElement>(null);
@@ -103,7 +125,7 @@ export default function Hero() {
         if (!el) return;
         el.style.transition = 'none';
         el.style.opacity = '1';
-        el.style.transform = `translate3d(${PHOTOS[i].baseX * s}px,${PHOTOS[i].baseY * s}px,0)`;
+        el.style.transform = photoTransform(PHOTOS[i].baseX, PHOTOS[i].baseY, el.offsetWidth, s);
       });
       [titleWrap, desc].forEach((r) => {
         if (!r.current) return;
@@ -131,12 +153,12 @@ export default function Hero() {
       el.style.transform  = `translate3d(${ox}px,${oy}px,0) scale(0.42)`;
     });
 
-    // Hide text elements
+    // Hide text elements — только opacity, БЕЗ transform:
+    // transform создаёт stacking-контекст и изолирует mix-blend-mode заголовка
     [titleWrap, desc].forEach((r) => {
       if (!r.current) return;
       r.current.style.transition = 'none';
       r.current.style.opacity    = '0';
-      r.current.style.transform  = 'translateY(20px)';
     });
     if (btn.current) {
       btn.current.style.transition = 'none';
@@ -157,15 +179,14 @@ export default function Hero() {
             opacity   0.55s ease ${delay}s
           `;
           el.style.opacity   = '1';
-          el.style.transform = `translate3d(${p.baseX * s}px,${p.baseY * s}px,0) scale(1)`;
+          el.style.transform = photoTransform(p.baseX, p.baseY, el.offsetWidth, s, 0, 1);
         });
 
         // Title reveals ~350 ms in
         timers.push(window.setTimeout(() => {
           if (titleWrap.current) {
-            titleWrap.current.style.transition = 'opacity 0.9s cubic-bezier(0.19,1,0.22,1), transform 0.9s cubic-bezier(0.19,1,0.22,1)';
+            titleWrap.current.style.transition = 'opacity 0.9s cubic-bezier(0.19,1,0.22,1)';
             titleWrap.current.style.opacity    = '1';
-            titleWrap.current.style.transform  = 'translateY(0)';
           }
           if (titleH1.current) {
             titleH1.current.classList.add('is-visible');
@@ -175,9 +196,8 @@ export default function Hero() {
         // Description
         timers.push(window.setTimeout(() => {
           if (desc.current) {
-            desc.current.style.transition = 'opacity 0.9s cubic-bezier(0.19,1,0.22,1), transform 0.9s cubic-bezier(0.19,1,0.22,1)';
+            desc.current.style.transition = 'opacity 0.9s cubic-bezier(0.19,1,0.22,1)';
             desc.current.style.opacity    = '1';
-            desc.current.style.transform  = 'translateY(0)';
           }
         }, 560));
 
@@ -197,6 +217,12 @@ export default function Hero() {
           itemRefs.current.forEach((el) => {
             if (el) el.style.transition = 'none';
           });
+          // снимаем inline-transform: он создаёт stacking-контекст
+          // и изолирует mix-blend-mode заголовка от фона страницы
+          if (titleWrap.current) {
+            titleWrap.current.style.transition = 'none';
+            titleWrap.current.style.transform = 'none';
+          }
         }, maxMs));
       });
     });
@@ -207,21 +233,36 @@ export default function Hero() {
     };
   }, []);
 
-  // ── SCROLL PARALLAX ──────────────────────────────────────────────────────
+  // ── SCROLL PARALLAX + RESIZE REPOSITION ──────────────────────────────────
   useEffect(() => {
     if (prefersReducedMotion()) return;
-    const onScroll = () => {
-      if (!entered.current) return;
-      const y = window.scrollY;
+    const hero = document.querySelector<HTMLElement>('.hero');
+
+    const applyPositions = (scrollY = window.scrollY) => {
       const s = posScale();
+      const heroH = hero?.offsetHeight ?? Infinity;
       itemRefs.current.forEach((el, i) => {
         if (!el) return;
         const p = PHOTOS[i];
-        el.style.transform = `translate3d(${p.baseX * s}px,${p.baseY * s + y * p.scrollSpeed / 1000}px,0)`;
+        const maxShift = Math.max(0, heroH - el.offsetHeight - p.baseY * s - 8);
+        const shift = Math.min(scrollY * p.scrollSpeed / 1000, maxShift);
+        el.style.transform = photoTransform(p.baseX, p.baseY, el.offsetWidth, s, shift);
       });
     };
+
+    const onScroll = () => {
+      if (!entered.current) return;
+      applyPositions();
+    };
+
+    const onResize = () => applyPositions();
+
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onResize, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+    };
   }, []);
 
   // ── MOUSE PARALLAX ────────────────────────────────────────────────────────
@@ -260,7 +301,7 @@ export default function Hero() {
             key={i}
             className="hero-item"
             ref={(el) => { itemRefs.current[i] = el; }}
-            style={{ opacity: 0 }}
+            style={{ opacity: 0, zIndex: p.caption ? 10 : 1 }} /* Тултипы/карточки с описанием рендерятся поверх обычных картинок */
           >
             <div className="hero-item-inner">
               <div className="hero-item-image">
@@ -284,7 +325,7 @@ export default function Hero() {
 
       {/* ── Centre text ────────────────────────────────────────────────── */}
       <div className="hero-center">
-        <div ref={titleWrap} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 0, transform: 'translateY(20px)' }}>
+        <div ref={titleWrap} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 0 }}>
           <h1
             ref={titleH1}
             className="hero-title h2 smart-text"
@@ -299,7 +340,6 @@ export default function Hero() {
           ref={desc}
           style={{
             opacity: 0,
-            transform: 'translateY(20px)',
             color: 'var(--muted)',
             lineHeight: 1.35,
             marginTop: '24rem',
@@ -310,19 +350,22 @@ export default function Hero() {
           }}
         >
           Системная дистрибуция смазочных материалов<br />
-          и автохимии от ведущих мировых производителей —<br />
-          11 собственных филиалов по всей России.
+          и автохимии от ведущих мировых производителей
         </p>
       </div>
 
       {/* ── CTA button ─────────────────────────────────────────────────── */}
       <div ref={btn} className="hero-btn" style={{ opacity: 0, transform: 'translate(-50%, 20px)' }}>
-        <button
-          className="btn-primary"
-          style={{ fontSize: '16rem', padding: '18rem 32rem' }}
-          onClick={() => navigate('/brands')}
-        >
-          Смотреть портфель
+        <button className="hero-cta" onClick={() => navigate('/brands')}>
+          <span>Смотреть портфель</span>
+          <span className="hero-cta-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12h15M13 6l6 6-6 6" />
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12h15M13 6l6 6-6 6" />
+            </svg>
+          </span>
         </button>
       </div>
 

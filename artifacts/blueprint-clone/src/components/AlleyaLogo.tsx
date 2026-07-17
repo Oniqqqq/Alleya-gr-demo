@@ -57,7 +57,7 @@ export default function AlleyaLogo({ className, inverted = false, markOnly = fal
     >
       <AlleyaMark inverted={inverted} />
       {!markOnly && (
-        <span style={{ display: 'flex', flexDirection: 'column', gap: '0.13em' }}>
+        <span className="alleya-logo-text-wrap" style={{ display: 'flex', flexDirection: 'column', gap: '0.13em' }}>
           <span
             style={{
               fontFamily: "'Saans', sans-serif",

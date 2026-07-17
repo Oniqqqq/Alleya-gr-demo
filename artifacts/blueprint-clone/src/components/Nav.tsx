@@ -71,7 +71,7 @@ export default function Nav() {
     <>
       <nav ref={navRef as React.RefObject<HTMLElement>} className={`nav ${isSmall ? 'is-small' : ''}`}>
         <Link href="/" className="nav-logo" aria-label="Аллея Групп — главная">
-          <AlleyaLogo className="nav-logo-text" />
+          <AlleyaLogo className="nav-logo-text" markOnly={isSmall} />
         </Link>
         <div className="nav-right">
           <div className="nav-items">

@@ -41,6 +41,7 @@ html {
   font-size: 0.0578703704vw;
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
 }
 
 /* CSS Reset & Base */
@@ -201,6 +202,9 @@ button { font-family: inherit; }
   /* запас под нижние выносные элементы (у, р, д, p, g) — иначе clip режет их */
   padding-bottom: 0.14em;
   margin-bottom: -0.14em;
+  /* запас под правые выносные элементы букв (напр. кратка буквы "й") — предотвращает обрезку */
+  padding-right: 0.12em;
+  margin-right: -0.12em;
 }
 .smart-text .line .text {
   display: block;
@@ -520,8 +524,9 @@ button { font-family: inherit; }
   height: 1620rem;
   position: relative;
   overflow: clip;          /* prevent photos from overflowing into next section */
-  width: 100vw;
-  isolation: isolate;      /* contain z-index stacking within hero */
+  width: 100%;
+  max-width: 100%;
+  /* без isolation: заголовку нужен mix-blend-mode относительно фона страницы */
 }
 .hero-items {
   position: absolute;
@@ -575,24 +580,31 @@ button { font-family: inherit; }
   display: block;
 }
 
+/* Матовый молочный liquid glass */
 .hero-item-caption {
   position: absolute;
   right: -50rem;
   top: 90%;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  background: rgba(36, 36, 36, 0.6);
-  border-radius: 12rem;
+  backdrop-filter: blur(26px) saturate(1.35);
+  -webkit-backdrop-filter: blur(26px) saturate(1.35);
+  background: linear-gradient(150deg, rgba(250, 248, 244, 0.82), rgba(243, 240, 234, 0.62));
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-bottom-color: rgba(26, 45, 114, 0.08);
+  border-radius: 14rem;
   padding: 22rem 20rem;
   min-width: 200rem;
   z-index: 2;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 12px 36px rgba(26, 45, 114, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.05);
 }
 .hero-item:nth-child(1) .hero-item-caption { right: -50rem; }
 .hero-item:nth-child(3) .hero-item-caption { right: 90rem; }
 .hero-item:nth-child(5) .hero-item-caption { right: -70rem; top: auto; bottom: auto; top: -60rem; }
 
 .hero-item-caption-name {
-  color: var(--green);
+  color: var(--alleya-red);
   font-size: 14rem;
   line-height: 1;
   margin-bottom: 10rem;
@@ -610,21 +622,28 @@ button { font-family: inherit; }
   font-weight: 400;
 }
 
+/* Центрирование без transform: transform создал бы stacking-контекст
+   и изолировал mix-blend-mode заголовка от фона страницы */
 .hero-center {
   position: absolute;
-  left: 50%;
-  top: 50vh;
-  transform: translate(-50%, -50%);
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100vh;
   text-align: center;
-  width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 20; /* Поверх photo-карточек (z-index 1-10) */
 }
+/* Заголовок hero — прямой navy-цвет: mix-blend-mode несовместим
+   с opacity<1 на родителе (создаёт stacking-контекст и изолирует blending) */
 .hero-title {
   max-width: 880rem;
   width: 100%;
-  color: var(--text);
+  color: var(--alleya-navy); /* Прямой navy — без mix-blend-mode */
 }
 .hero-description {
   color: var(--muted);
@@ -1241,6 +1260,8 @@ button { font-family: inherit; }
   user-select: none;
   margin-top: 40rem;
   margin-bottom: -70rem;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 /* === CONTACT SECTION / FORM === */
@@ -1803,6 +1824,8 @@ button { font-family: inherit; }
   gap: 16rem;
   align-items: center;
   margin-top: 48rem;
+  min-width: 0;
+  max-width: 100%;
 }
 .strip-arrow {
   width: 44rem;
@@ -1832,6 +1855,8 @@ button { font-family: inherit; }
   -ms-overflow-style: none;
   padding: 6rem 4rem 14rem;
   scroll-snap-type: x proximity;
+  min-width: 0;
+  max-width: 100%;
 }
 .brand-strip::-webkit-scrollbar { display: none; }
 
@@ -2371,38 +2396,54 @@ button { font-family: inherit; }
   /* Пересчёт масштаба: 1rem = 1px при ширине 400px */
   html { font-size: 0.25vw; }
 
+  /* Скрываем текстовую часть логотипа, чтобы он не слипался с кнопкой "Меню" */
+  .alleya-logo-text-wrap {
+    display: none !important;
+  }
+
   .nav {
     top: 12rem;
     width: calc(100% - 32rem);
-    padding: 10rem 10rem 10rem 20rem;
+    padding: 10rem 16rem;
   }
   .nav-items { display: none; }
-  .nav-logo-text { font-size: 46rem; }
-  .footer-logo-text { font-size: 64rem; }
-  .nav-menu-toggle { font-size: 20rem !important; }
+  .nav-logo-text { font-size: 40rem; } /* Уменьшили размер знака в шапке */
+  .footer-logo-text { font-size: 48rem; }
+  .nav-menu-toggle { font-size: 18rem !important; }
   .nav-hire { display: none; }
-  .nav-overlay-link { font-size: 52rem !important; }
+  .nav-overlay-link { font-size: 44rem !important; }
 
-  /* Hero: скрываем часть фоновых объектов, упрощаем параллакс */
-  .hero { height: 1300rem; }
+  /* Hero: превращаем коллаж в аккуратный полупрозрачный фон, чтобы не слипался с текстом */
+  .hero { height: 110vh; min-height: 560rem; overflow: hidden; }
+  .hero-items {
+    opacity: 0.14 !important; /* Легкие фоновые очертания */
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-item-caption { display: none; }
   .hero-item:nth-child(2),
   .hero-item:nth-child(7),
   .hero-item:nth-child(9) { display: none; }
-  .hero-item-caption { display: none; }
-  .hero-item:nth-child(1) { width: 150rem; }
-  .hero-item:nth-child(3) { width: 120rem; }
-  .hero-item:nth-child(4) { width: 110rem; }
-  .hero-item:nth-child(5) { width: 140rem; }
-  .hero-item:nth-child(6) { width: 170rem; }
-  .hero-item:nth-child(8) { width: 150rem; }
-  .hero-title { max-width: 90%; font-size: 52rem; }
-  .hero-center p { font-size: 24rem !important; max-width: 90% !important; }
-  .hero-btn .btn-primary { font-size: 24rem !important; }
+  .hero-item:nth-child(1) { width: 140rem; }
+  .hero-item:nth-child(3) { width: 110rem; }
+  .hero-item:nth-child(4) { width: 100rem; }
+  .hero-item:nth-child(5) { width: 130rem; }
+  .hero-item:nth-child(6) { width: 160rem; }
+  .hero-item:nth-child(8) { width: 140rem; }
+  
+  .hero-center { z-index: 10; }
+  .hero-title { max-width: 92%; font-size: 34rem !important; line-height: 1.15; } /* Умещается без переноса по буквам */
+  .hero-center p { font-size: 18rem !important; max-width: 90% !important; line-height: 1.4; }
+  .hero-btn { z-index: 15; }
+  .hero-cta { font-size: 18rem; padding: 10rem 10rem 10rem 26rem; }
+  .hero-cta-arrow { width: 44rem; height: 44rem; }
+  .hero-cta-arrow svg { width: 19rem; height: 19rem; }
 
-  .h1 { font-size: 64rem; }
-  .h2 { font-size: 48rem; }
-  .super { font-size: 60rem; }
-  .small-title { font-size: 18rem; }
+  /* Уменьшенные заголовки для предотвращения обрезания слов на телефонах */
+  .h1 { font-size: 48rem; }
+  .h2 { font-size: 36rem; }
+  .super { font-size: 52rem; }
+  .small-title { font-size: 16rem; }
 
   .what-we-do-content {
     grid-template-columns: 1fr;
@@ -2425,8 +2466,11 @@ button { font-family: inherit; }
   .stats-left, .tech-left, .contact-left { position: static; }
   .flex-item:nth-child(2) { padding-top: 0; }
   .flex-item-title { font-size: 40rem; }
-  .flex-item-desc, .stat-desc, .tech-item-label { font-size: 22rem; max-width: none; }
+  .flex-item-desc, .stat-desc, .tech-item-label { font-size: 22rem; max-width: 100%; word-break: break-word; }
   .stats-subtitle, .tech-subtitle { max-width: none; }
+  /* Цифры в статистике — ограничиваем размер, чтобы не вылезали за экран */
+  .stat-number { font-size: 90rem !important; overflow-wrap: anywhere; }
+  .stat-item { padding: 40rem 0; }
   .tech-item-icon { width: 60rem; height: 60rem; }
   .logo-section-title { font-size: 22rem; }
   .logo-item { height: 40rem; }
@@ -2529,6 +2573,13 @@ button { font-family: inherit; }
 /* Page container */
 #root {
   position: relative;
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+main {
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 /* === СТРАХОВКИ REVEAL-АНИМАЦИИ ===
@@ -2595,4 +2646,75 @@ button { font-family: inherit; }
 }
 @media (max-width: 820px) {
   .barrel3d { height: 440rem; }
+}
+
+/* === HERO CTA: акцентная кнопка со стрелкой-эстафетой === */
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 18rem;
+  font-family: 'Saans Mono', monospace;
+  font-size: 16rem;
+  line-height: 1;
+  padding: 10rem 10rem 10rem 30rem;
+  background: var(--alleya-navy);
+  color: #fff;
+  border: none;
+  border-radius: 100rem;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 14px 36px rgba(26, 45, 114, 0.35),
+    0 3px 10px rgba(26, 45, 114, 0.25);
+  transition:
+    background 0.5s cubic-bezier(0.19, 1, 0.22, 1),
+    transform 0.5s cubic-bezier(0.19, 1, 0.22, 1),
+    box-shadow 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.hero-cta:hover {
+  background: var(--alleya-navy-light);
+  transform: translateY(-2rem);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 20px 48px rgba(26, 45, 114, 0.4),
+    0 4px 12px rgba(26, 45, 114, 0.28);
+}
+.hero-cta-arrow {
+  width: 44rem;
+  height: 44rem;
+  border-radius: 50%;
+  background: var(--alleya-red);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 6px 18px rgba(232, 40, 43, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.hero-cta-arrow svg {
+  width: 19rem;
+  height: 19rem;
+  position: absolute;
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-cta-arrow svg:nth-child(1) {
+  transform: translateX(0);
+}
+.hero-cta-arrow svg:nth-child(2) {
+  transform: translateX(-240%);
+}
+
+/* Эстафета запускается только при наведении на саму кнопку */
+.hero-cta:hover .hero-cta-arrow svg:nth-child(1) {
+  transform: translateX(240%);
+}
+.hero-cta:hover .hero-cta-arrow svg:nth-child(2) {
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta-arrow svg { transition: none; }
+  .hero-cta-arrow svg:nth-child(2) { display: none; }
 }
