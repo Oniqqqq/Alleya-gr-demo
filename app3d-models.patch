@@ -1,0 +1,801 @@
+diff --git a/artifacts/blueprint-clone/src/components/Application3D.tsx b/artifacts/blueprint-clone/src/components/Application3D.tsx
+new file mode 100644
+index 0000000..5937955
+--- /dev/null
++++ b/artifacts/blueprint-clone/src/components/Application3D.tsx
+@@ -0,0 +1,679 @@
++import { useEffect, useRef, useState } from 'react';
++import * as THREE from 'three';
++
++interface Application3DProps {
++  /** id направления из data/applications.ts */
++  appId: string;
++  /** Картинка-фолбэк, если WebGL недоступен */
++  image: string;
++  alt: string;
++}
++
++const hasWebGL = () => {
++  try {
++    const c = document.createElement('canvas');
++    return !!(c.getContext('webgl2') || c.getContext('webgl'));
++  } catch {
++    return false;
++  }
++};
++
++/* ── Палитра — повторяет стиль SVG-плейсхолдеров (wide-*.svg) ──────────── */
++const C = {
++  face: 0x2c2c2a,     // тёмные грани — чуть светлее фона панели
++  edge: 0x9a9a9a,     // основные линии
++  edgeDim: 0x5c5c5c,  // вторичные линии
++  accent: 0xc496ff,   // фирменная фиолетовая точка
++};
++
++/** Монospace-подпись в углу — как текст, зашитый в старые SVG */
++const CAPTIONS: Record<string, [string, string]> = {
++  passenger: ['МАСЛА', 'ЛИНЕЙКА ПРОДУКЦИИ'],
++  commercial: ['ЛОГИСТИКА', 'ФЕДЕРАЛЬНЫЕ ПОСТАВКИ'],
++  industry: ['ПРОМЫШЛЕННОСТЬ', 'СОЖ И ИНДУСТРИАЛЬНЫЕ МАСЛА'],
++  special: ['СПЕЦТЕХНИКА', 'СТРОИТЕЛЬНАЯ ТЕХНИКА'],
++  equipment: ['ПРОИЗВОДСТВО', 'ОСНАЩЕНИЕ ПЛОЩАДОК'],
++  service: ['СЕРВИС', 'ПОДДЕРЖКА ПАРТНЁРОВ'],
++};
++
++const v2 = (x: number, y: number) => new THREE.Vector2(x, y);
++const quad = (a: number, b: number, c: number, t: number) =>
++  (1 - t) * (1 - t) * a + 2 * (1 - t) * t * b + t * t * c;
++
++function faceMaterial(extra: THREE.MeshStandardMaterialParameters = {}) {
++  return new THREE.MeshStandardMaterial({
++    color: C.face,
++    roughness: 0.62,
++    metalness: 0.14,
++    ...extra,
++  });
++}
++
++/** Тёмная грань + светлый контур по рёбрам — «чертёжный» стиль */
++function tech(
++  geo: THREE.BufferGeometry,
++  opts: { dim?: boolean; threshold?: number; mat?: THREE.Material } = {},
++): THREE.Mesh {
++  const mesh = new THREE.Mesh(geo, opts.mat ?? faceMaterial());
++  const lines = new THREE.LineSegments(
++    new THREE.EdgesGeometry(geo, opts.threshold ?? 24),
++    new THREE.LineBasicMaterial({ color: opts.dim ? C.edgeDim : C.edge }),
++  );
++  mesh.add(lines);
++  return mesh;
++}
++
++/** Горизонтальное кольцо-линия (обручи этикетки, бочки и т.п.) */
++function ring(
++  radius: number,
++  opts: { color?: number; y?: number; x?: number; z?: number; opacity?: number } = {},
++): THREE.LineLoop {
++  const seg = 72;
++  const pts: THREE.Vector3[] = [];
++  for (let i = 0; i < seg; i++) {
++    const a = (i / seg) * Math.PI * 2;
++    pts.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius));
++  }
++  const l = new THREE.LineLoop(
++    new THREE.BufferGeometry().setFromPoints(pts),
++    new THREE.LineBasicMaterial({
++      color: opts.color ?? C.edgeDim,
++      transparent: true,
++      opacity: opts.opacity ?? 1,
++    }),
++  );
++  l.position.set(opts.x ?? 0, opts.y ?? 0, opts.z ?? 0);
++  return l;
++}
++
++function accentDot(radius: number): THREE.Mesh {
++  return new THREE.Mesh(
++    new THREE.SphereGeometry(radius, 20, 14),
++    new THREE.MeshBasicMaterial({ color: C.accent }),
++  );
++}
++
++/* ── Модели направлений ────────────────────────────────────────────────── */
++
++/** Легковой транспорт — флакон моторного масла (как wide-bottle.svg) */
++function buildBottle(): THREE.Group {
++  const g = new THREE.Group();
++
++  const pts: THREE.Vector2[] = [];
++  pts.push(v2(0.001, -1.0));
++  pts.push(v2(0.52, -1.0));
++  pts.push(v2(0.60, -0.96));
++  pts.push(v2(0.625, -0.88));
++  pts.push(v2(0.64, 0.02));
++  // плечо флакона — квадратичная кривая от корпуса к горлышку
++  const p0 = v2(0.64, 0.02);
++  const p1 = v2(0.62, 0.34);
++  const p2 = v2(0.265, 0.46);
++  for (let i = 1; i <= 8; i++) {
++    const t = i / 8;
++    pts.push(v2(quad(p0.x, p1.x, p2.x, t), quad(p0.y, p1.y, p2.y, t)));
++  }
++  pts.push(v2(0.255, 0.56));
++  g.add(tech(new THREE.LatheGeometry(pts, 72), { threshold: 18 }));
++
++  // крышка
++  const cap = tech(new THREE.CylinderGeometry(0.29, 0.3, 0.32, 40));
++  cap.position.y = 0.72;
++  g.add(cap);
++
++  // фирменная фиолетовая точка на крышке — как в SVG-заглушке
++  const dot = accentDot(0.05);
++  dot.scale.z = 0.55;
++  dot.position.set(0, 0.74, 0.27);
++  g.add(dot);
++
++  // этикетка: изогнутый сегмент с canvas-текстурой «строк текста»
++  const canvas = document.createElement('canvas');
++  canvas.width = 512;
++  canvas.height = 320;
++  const ctx = canvas.getContext('2d')!;
++  ctx.strokeStyle = '#565656';
++  ctx.lineWidth = 5;
++  ctx.lineCap = 'round';
++  ctx.strokeRect(46, 34, 420, 252);
++  for (const [y, w] of [
++    [118, 352],
++    [158, 352],
++    [198, 230],
++  ] as const) {
++    ctx.beginPath();
++    ctx.moveTo(80, y);
++    ctx.lineTo(80 + w, y);
++    ctx.stroke();
++  }
++  const tex = new THREE.CanvasTexture(canvas);
++  tex.colorSpace = THREE.SRGBColorSpace;
++  const label = new THREE.Mesh(
++    new THREE.CylinderGeometry(0.66, 0.66, 0.62, 48, 1, true, -0.95, 1.9),
++    new THREE.MeshStandardMaterial({
++      map: tex,
++      color: 0x8a8a8a, // гасим яркость под свет — сливаемся с тоном линий SVG
++      transparent: true,
++      roughness: 0.7,
++      metalness: 0.1,
++    }),
++  );
++  label.position.y = -0.4;
++  g.add(label);
++  g.add(ring(0.662, { y: -0.71 }));
++  g.add(ring(0.662, { y: -0.09 }));
++
++  return g;
++}
++
++/** Коммерческий транспорт — грузовой фургон */
++function buildTruck(): THREE.Group {
++  const g = new THREE.Group();
++
++  const chassis = tech(new THREE.BoxGeometry(3.0, 0.14, 0.52));
++  chassis.position.set(0, 0.42, 0);
++  g.add(chassis);
++
++  const cargo = tech(new THREE.BoxGeometry(2.0, 1.55, 0.95));
++  cargo.position.set(-0.5, 1.35, 0);
++  g.add(cargo);
++
++  const cab = tech(new THREE.BoxGeometry(0.95, 1.0, 0.86));
++  cab.position.set(1.22, 1.02, 0);
++  g.add(cab);
++
++  const hood = tech(new THREE.BoxGeometry(0.42, 0.5, 0.82));
++  hood.position.set(1.85, 0.72, 0);
++  g.add(hood);
++
++  // маячок на кабине — фиолетовый акцент
++  const beacon = accentDot(0.06);
++  beacon.position.set(1.22, 1.56, 0);
++  g.add(beacon);
++
++  const wheelGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 28);
++  wheelGeo.rotateX(Math.PI / 2);
++  const wheelMat = faceMaterial({ color: 0x242422 });
++  for (const [x, z] of [
++    [-1.15, 0.45],
++    [-1.15, -0.45],
++    [-0.72, 0.45],
++    [-0.72, -0.45],
++    [1.45, 0.45],
++    [1.45, -0.45],
++  ] as const) {
++    const w = tech(wheelGeo.clone(), { mat: wheelMat });
++    w.position.set(x, 0.3, z);
++    g.add(w);
++  }
++
++  return g;
++}
++
++/** Промышленность — 200-литровая бочка */
++function buildDrum(): THREE.Group {
++  const g = new THREE.Group();
++
++  const pts: THREE.Vector2[] = [];
++  pts.push(v2(0.001, -0.96));
++  pts.push(v2(0.72, -0.96));
++  pts.push(v2(0.78, -1.0));
++  pts.push(v2(0.8, -0.92));
++  pts.push(v2(0.8, 0.92));
++  pts.push(v2(0.78, 1.0));
++  pts.push(v2(0.72, 0.96));
++  pts.push(v2(0.001, 0.96));
++  g.add(tech(new THREE.LatheGeometry(pts, 72), { threshold: 18 }));
++
++  // обручи; центральный — фиолетовый акцент
++  g.add(ring(0.805, { y: -0.3 }));
++  g.add(ring(0.805, { y: 0.3 }));
++  g.add(ring(0.805, { y: 0, color: C.accent, opacity: 0.9 }));
++
++  // заливные горловины на крышке
++  const bungMat = faceMaterial({ color: 0x24262a, metalness: 0.7, roughness: 0.3 });
++  const bung1 = tech(new THREE.CylinderGeometry(0.075, 0.075, 0.05, 24), { mat: bungMat, dim: true });
++  bung1.position.set(0.42, 0.975, 0);
++  g.add(bung1);
++  const bung2 = tech(new THREE.CylinderGeometry(0.05, 0.05, 0.05, 24), { mat: bungMat, dim: true });
++  bung2.position.set(-0.4, 0.975, -0.14);
++  g.add(bung2);
++
++  return g;
++}
++
++/** Специальная техника — экскаватор */
++function buildExcavator(): THREE.Group {
++  const g = new THREE.Group();
++
++  for (const z of [0.45, -0.45] as const) {
++    const track = tech(new THREE.BoxGeometry(1.8, 0.36, 0.36));
++    track.position.set(0, 0.18, z);
++    g.add(track);
++  }
++
++  const deck = tech(new THREE.BoxGeometry(1.15, 0.18, 0.95));
++  deck.position.set(0, 0.45, 0);
++  g.add(deck);
++
++  const hull = tech(new THREE.BoxGeometry(1.0, 0.55, 0.8));
++  hull.position.set(0.05, 0.82, 0);
++  g.add(hull);
++
++  const cab = tech(new THREE.BoxGeometry(0.48, 0.62, 0.45));
++  cab.position.set(-0.3, 0.85, 0.4);
++  g.add(cab);
++
++  // маячок на крыше кабины — акцент
++  const beacon = accentDot(0.05);
++  beacon.position.set(-0.3, 1.17, 0.4);
++  g.add(beacon);
++
++  // стрела: две секции на шарнирах
++  const pivot1 = new THREE.Group();
++  pivot1.position.set(0.45, 0.85, 0.3);
++  pivot1.rotation.z = -0.85;
++  const boom = tech(new THREE.BoxGeometry(0.16, 1.1, 0.14));
++  boom.position.y = 0.55;
++  pivot1.add(boom);
++  g.add(pivot1);
++
++  const pivot2 = new THREE.Group();
++  pivot2.position.set(1.2, 1.51, 0.3);
++  pivot2.rotation.z = -2.62;
++  const stick = tech(new THREE.BoxGeometry(0.12, 0.95, 0.11));
++  stick.position.y = 0.475;
++  pivot2.add(stick);
++  g.add(pivot2);
++
++  const bucket = tech(new THREE.BoxGeometry(0.3, 0.26, 0.26));
++  bucket.position.set(1.62, 0.6, 0.3);
++  bucket.rotation.z = 0.5;
++  g.add(bucket);
++
++  return g;
++}
++
++/** Производственное оборудование — шестерня на валу */
++function buildGear(): THREE.Group {
++  const g = new THREE.Group();
++
++  const teeth = 12;
++  const rO = 0.95;
++  const rR = 0.76;
++  const step = (Math.PI * 2) / teeth;
++  const shape = new THREE.Shape();
++  for (let i = 0; i < teeth; i++) {
++    const a = i * step;
++    const corners: Array<[number, number]> = [
++      [rR, a + step * 0.02],
++      [rO, a + step * 0.2],
++      [rO, a + step * 0.44],
++      [rR, a + step * 0.62],
++    ];
++    for (const [r, ang] of corners) {
++      const x = Math.cos(ang) * r;
++      const y = Math.sin(ang) * r;
++      if (i === 0 && ang === a + step * 0.02) shape.moveTo(x, y);
++      else shape.lineTo(x, y);
++    }
++  }
++  shape.closePath();
++  const hole = new THREE.Path();
++  hole.absarc(0, 0, 0.3, 0, Math.PI * 2, true);
++  shape.holes.push(hole);
++
++  const geo = new THREE.ExtrudeGeometry(shape, {
++    depth: 0.34,
++    bevelEnabled: false,
++    curveSegments: 24,
++  });
++  geo.translate(0, 0, -0.17);
++
++  const wrap = new THREE.Group();
++  wrap.rotation.x = -1.05;
++  wrap.add(tech(geo, { threshold: 8 }));
++
++  const shaftGeo = new THREE.CylinderGeometry(0.11, 0.11, 1.15, 24);
++  shaftGeo.rotateX(Math.PI / 2);
++  wrap.add(tech(shaftGeo, { dim: true }));
++
++  const cap = accentDot(0.08);
++  cap.position.set(0, 0, 0.6);
++  wrap.add(cap);
++
++  g.add(wrap);
++  return g;
++}
++
++/** Сервисное обслуживание — комбинированный ключ */
++function buildWrench(): THREE.Group {
++  const g = new THREE.Group();
++  const wrap = new THREE.Group();
++
++  // рукоятка — вытянутый скруглённый профиль
++  const shape = new THREE.Shape();
++  const hx = -0.3;
++  const hw = 1.4;
++  const hh = 0.2;
++  const r = 0.09;
++  shape.moveTo(hx + r, -hh / 2);
++  shape.lineTo(hx + hw - r, -hh / 2);
++  shape.absarc(hx + hw - r, -hh / 2 + r, r, -Math.PI / 2, 0, false);
++  shape.lineTo(hx + hw, hh / 2 - r);
++  shape.absarc(hx + hw - r, hh / 2 - r, r, 0, Math.PI / 2, false);
++  shape.lineTo(hx + r, hh / 2);
++  shape.absarc(hx + r, hh / 2 - r, r, Math.PI / 2, Math.PI, false);
++  shape.lineTo(hx, -hh / 2 + r);
++  shape.absarc(hx + r, -hh / 2 + r, r, Math.PI, Math.PI * 1.5, false);
++
++  const handleGeo = new THREE.ExtrudeGeometry(shape, {
++    depth: 0.09,
++    bevelEnabled: false,
++    curveSegments: 16,
++  });
++  handleGeo.translate(0, 0, -0.045);
++  wrap.add(tech(handleGeo, { threshold: 8 }));
++
++  // рожковая головка — открытая дуга тора
++  const jawGeo = new THREE.TorusGeometry(0.33, 0.1, 14, 40, 4.4);
++  const jaw = tech(jawGeo, { threshold: 30 });
++  const gap = Math.PI * 2 - 4.4;
++  jaw.position.set(-0.55, 0, 0);
++  jaw.rotation.z = Math.PI + gap / 2;
++  wrap.add(jaw);
++
++  // кольцевая головка на другом конце
++  const ringGeo = new THREE.TorusGeometry(0.2, 0.085, 14, 36);
++  const ringEnd = tech(ringGeo, { threshold: 30 });
++  ringEnd.position.set(1.3, 0, 0);
++  wrap.add(ringEnd);
++
++  const dot = accentDot(0.045);
++  dot.position.set(0.45, 0, 0.055);
++  wrap.add(dot);
++
++  wrap.rotation.z = -0.5;
++  wrap.rotation.x = -0.55;
++  g.add(wrap);
++  return g;
++}
++
++const BUILDERS: Record<string, () => THREE.Group> = {
++  passenger: buildBottle,
++  commercial: buildTruck,
++  industry: buildDrum,
++  special: buildExcavator,
++  equipment: buildGear,
++  service: buildWrench,
++};
++
++/* ── Утилиты сцены ─────────────────────────────────────────────────────── */
++
++/** Нормализация: любая модель → max dim 2.35, центр в начале координат */
++function normalize(inner: THREE.Group): THREE.Group {
++  const box = new THREE.Box3().setFromObject(inner);
++  const size = new THREE.Vector3();
++  const center = new THREE.Vector3();
++  box.getSize(size);
++  box.getCenter(center);
++  const s = 2.35 / Math.max(size.x, size.y, size.z, 0.001);
++  const outer = new THREE.Group();
++  inner.scale.setScalar(s);
++  inner.position.set(-center.x * s, -center.y * s, -center.z * s);
++  outer.add(inner);
++  return outer;
++}
++
++function collectMats(root: THREE.Object3D): THREE.Material[] {
++  const mats: THREE.Material[] = [];
++  root.traverse((o) => {
++    const m = (o as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
++    if (Array.isArray(m)) mats.push(...m);
++    else if (m) mats.push(m);
++  });
++  return mats;
++}
++
++const setOpacity = (mats: THREE.Material[], v: number) => {
++  for (const m of mats) {
++    m.transparent = true;
++    m.opacity = v;
++  }
++};
++
++function disposeObject(root: THREE.Object3D) {
++  root.traverse((o) => {
++    const mesh = o as THREE.Mesh;
++    mesh.geometry?.dispose();
++    const m = mesh.material as THREE.Material | THREE.Material[] | undefined;
++    const dispose = (mat: THREE.Material) => {
++      (mat as THREE.MeshStandardMaterial).map?.dispose();
++      mat.dispose();
++    };
++    if (Array.isArray(m)) m.forEach(dispose);
++    else if (m) dispose(m);
++  });
++}
++
++const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
++const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
++
++/**
++ * 3D-витрина блока «По направлениям»: для каждого направления —
++ * своя модель в фирменном «чертёжном» стиле (тёмные грани, светлые
++ * контуры, фиолетовый акцент), бесконечный поворот на месте,
++ * плавная смена модели при переключении направления.
++ * Без WebGL — прежняя SVG-заглушка.
++ */
++export default function Application3D({ appId, image, alt }: Application3DProps) {
++  const [webgl] = useState(hasWebGL);
++  const mountRef = useRef<HTMLDivElement>(null);
++  const pendingId = useRef(appId);
++
++  useEffect(() => {
++    pendingId.current = appId;
++  }, [appId]);
++
++  useEffect(() => {
++    if (!webgl || !mountRef.current) return;
++    const mount = mountRef.current;
++    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
++
++    // ── Сцена ──────────────────────────────────────────────────────
++    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
++    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
++    renderer.setClearColor(0x000000, 0); // фон — CSS-градиент панели
++    renderer.toneMapping = THREE.ACESFilmicToneMapping;
++    renderer.toneMappingExposure = 1.0;
++    renderer.outputColorSpace = THREE.SRGBColorSpace;
++    mount.appendChild(renderer.domElement);
++
++    const scene = new THREE.Scene();
++    const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 40);
++    camera.position.set(0, 0.72, 7.8);
++    camera.lookAt(0, -0.08, 0);
++
++    scene.add(new THREE.HemisphereLight(0xe8e8e6, 0x141413, 1.15));
++    const key = new THREE.DirectionalLight(0xffffff, 1.4);
++    key.position.set(3.2, 4.5, 4.2);
++    scene.add(key);
++    const rim = new THREE.DirectionalLight(0xbfc4d4, 0.4);
++    rim.position.set(-4, 1.5, -3);
++    scene.add(rim);
++
++    // «Пол» — техническая полярная сетка под моделью
++    const grid = new THREE.PolarGridHelper(1.85, 12, 5, 72, 0x50504e, 0x3a3a38);
++    grid.position.y = -1.42;
++    const gridMat = grid.material as THREE.LineBasicMaterial;
++    gridMat.transparent = true;
++    gridMat.opacity = 0.55;
++    scene.add(grid);
++
++    // держатель модели: лёгкий художественный наклон, как у Barrel3D
++    const holder = new THREE.Group();
++    holder.rotation.x = -0.1;
++    scene.add(holder);
++
++    // ── Смена моделей ──────────────────────────────────────────────
++    const OUT_MS = 260;
++    const IN_MS = 600;
++    let current: { id: string; group: THREE.Group; mats: THREE.Material[] } | null = null;
++    let trans: { phase: 'out' | 'in'; t0: number } | null = null;
++
++    const swapTo = (id: string) => {
++      const build = BUILDERS[id] ?? BUILDERS.passenger;
++      const group = normalize(build());
++      const mats = collectMats(group);
++      setOpacity(mats, 0);
++      holder.add(group);
++      const next = { id, group, mats };
++      current = next;
++      return next;
++    };
++
++    // ── Размер ─────────────────────────────────────────────────────
++    // Рендер по требованию для prefers-reduced-motion (экономим батарею)
++    let dirty = true;
++
++    const resize = () => {
++      const w = mount.clientWidth;
++      const h = mount.clientHeight;
++      if (!w || !h) return;
++      renderer.setSize(w, h);
++      camera.aspect = w / h;
++      camera.updateProjectionMatrix();
++      dirty = true;
++    };
++    resize();
++    const ro = new ResizeObserver(resize);
++    ro.observe(mount);
++
++    // ── Анимация: бесконечный поворот + плавная смена модели ──────
++    let raf = 0;
++    let angle = Math.PI * 0.35;
++    let last = 0;
++
++    const tick = (t: number) => {
++      const dt = Math.min(0.05, (t - last) / 1000 || 0);
++      last = t;
++
++      const target = pendingId.current;
++
++      if (reduced) {
++        // без анимации: жёсткая подмена, статичный ракурс
++        if (current && current.id !== target) {
++          holder.remove(current.group);
++          disposeObject(current.group);
++          current = null;
++        }
++        if (!current) {
++          const created = swapTo(target);
++          setOpacity(created.mats, 1);
++          dirty = true;
++        }
++        if (!dirty) {
++          raf = requestAnimationFrame(tick);
++          return;
++        }
++        dirty = false;
++      } else {
++        // запуск перехода, если направление сменилось
++        if (!trans && (!current || current.id !== target)) {
++          if (current) trans = { phase: 'out', t0: t };
++          else {
++            swapTo(target);
++            trans = { phase: 'in', t0: t };
++          }
++        }
++
++        if (trans && current) {
++          if (trans.phase === 'out') {
++            const k = clamp01((t - trans.t0) / OUT_MS);
++            const e = k * k;
++            setOpacity(current.mats, 1 - e);
++            current.group.scale.setScalar(1 - 0.45 * e);
++            if (k >= 1) {
++              holder.remove(current.group);
++              disposeObject(current.group);
++              current = null;
++              swapTo(target);
++              trans = { phase: 'in', t0: t };
++            }
++          } else {
++            const k = clamp01((t - trans.t0) / IN_MS);
++            const e = easeOutCubic(k);
++            setOpacity(current.mats, e);
++            // небольшой отскок при появлении
++            const s = 0.55 + 0.45 * e + (k < 1 ? Math.sin(k * Math.PI) * 0.04 : 0);
++            current.group.scale.setScalar(s);
++            if (k >= 1) {
++              trans = null;
++              setOpacity(current.mats, 1);
++              current.group.scale.setScalar(1);
++            }
++          }
++        }
++
++        // поворот на месте: быстрее в момент переключения
++        const speed = 0.5 + (trans ? 3.6 : 0);
++        angle += dt * speed;
++        holder.rotation.y = angle;
++        holder.position.y = Math.sin(t / 1500) * 0.05;
++      }
++
++      try {
++        renderer.render(scene, camera);
++      } catch (err) {
++        console.error('[app3d] render failed:', err);
++        return;
++      }
++      raf = requestAnimationFrame(tick);
++    };
++    raf = requestAnimationFrame(tick);
++
++    return () => {
++      cancelAnimationFrame(raf);
++      ro.disconnect();
++      if (current) {
++        holder.remove(current.group);
++        disposeObject(current.group);
++        current = null;
++      }
++      grid.geometry.dispose();
++      gridMat.dispose();
++      renderer.dispose();
++      mount.removeChild(renderer.domElement);
++    };
++    // сцена создаётся один раз; смена модели — через pendingId ref
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, [webgl]);
++
++  const caption = CAPTIONS[appId];
++
++  if (!webgl) {
++    return (
++      <div className="app3d app3d--static">
++        <img src={image} alt={alt} decoding="async" />
++        {caption && (
++          <div className="app3d-caption" key={appId}>
++            <span className="app3d-caption-title">{caption[0]}</span>
++            <span className="app3d-caption-sub">{caption[1]}</span>
++          </div>
++        )}
++      </div>
++    );
++  }
++
++  return (
++    <div className="app3d">
++      <div ref={mountRef} className="app3d-mount" role="img" aria-label={alt} />
++      {caption && (
++        <div className="app3d-caption" key={appId}>
++          <span className="app3d-caption-title">{caption[0]}</span>
++          <span className="app3d-caption-sub">{caption[1]}</span>
++        </div>
++      )}
++    </div>
++  );
++}
+diff --git a/artifacts/blueprint-clone/src/index.css b/artifacts/blueprint-clone/src/index.css
+index 09ad04f..49e9d91 100644
+--- a/artifacts/blueprint-clone/src/index.css
++++ b/artifacts/blueprint-clone/src/index.css
+@@ -2718,3 +2718,88 @@ main {
+   .hero-cta-arrow svg { transition: none; }
+   .hero-cta-arrow svg:nth-child(2) { display: none; }
+ }
++
++/* ── 3D-витрина блока «По направлениям» ─────────────────────────────────
++   Тот же визуальный язык, что у SVG-плейсхолдеров: тёмный радиальный
++   градиент, «пол»-подсветка, монospace-подпись. Canvas прозрачный —
++   фон рисует CSS. */
++.apps-stage-3d {
++  background: radial-gradient(120% 90% at 50% 18%, #333331 0%, #262624 55%, #1d1d1c 100%);
++}
++.apps-stage-3d::after {
++  content: '';
++  position: absolute;
++  left: 0;
++  right: 0;
++  bottom: 0;
++  height: 28%;
++  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%);
++  pointer-events: none;
++}
++.app3d {
++  position: absolute;
++  inset: 0;
++}
++.app3d-mount {
++  position: absolute;
++  inset: 0;
++}
++.app3d-mount canvas {
++  width: 100%;
++  height: 100%;
++  display: block;
++}
++.app3d--static img {
++  width: 100%;
++  height: 100%;
++  object-fit: cover;
++  display: block;
++}
++
++/* Витрина участвует в тех же переходах wipe/scale, что и бывшие <img> */
++.apps-stage .brand-stage-image .app3d {
++  transition: clip-path 1s cubic-bezier(0.19, 1, 0.22, 1), transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
++  clip-path: inset(0 0 0 0);
++}
++.apps-stage.phase-leaving .brand-stage-image .app3d {
++  clip-path: inset(0 0 100% 0);
++  transform: scale(1.06) translateY(-3%);
++  opacity: 0.4;
++  transition-duration: 0.45s;
++}
++.apps-stage.phase-entering .brand-stage-image .app3d {
++  animation: stage-image-in 1.1s cubic-bezier(0.19, 1, 0.22, 1) both;
++}
++
++/* Монospace-подпись направления, как текст в старых SVG */
++.app3d-caption {
++  position: absolute;
++  left: 36rem;
++  bottom: 30rem;
++  display: flex;
++  flex-direction: column;
++  gap: 6rem;
++  pointer-events: none;
++  font-family: 'Saans Mono', ui-monospace, monospace;
++  animation: app3d-caption-in 0.7s cubic-bezier(0.19, 1, 0.22, 1) 0.15s both;
++}
++.app3d-caption-title {
++  font-size: 15rem;
++  letter-spacing: 2rem;
++  color: #7d7d7d;
++}
++.app3d-caption-sub {
++  font-size: 11rem;
++  letter-spacing: 1.5rem;
++  color: #565656;
++}
++@keyframes app3d-caption-in {
++  from {
++    opacity: 0;
++    transform: translateY(10rem);
++  }
++  to {
++    opacity: 1;
++    transform: translateY(0);
++  }
++}
+diff --git a/artifacts/blueprint-clone/src/sections/brands/ApplicationsPicker.tsx b/artifacts/blueprint-clone/src/sections/brands/ApplicationsPicker.tsx
+index 288d58b..157aa63 100644
+--- a/artifacts/blueprint-clone/src/sections/brands/ApplicationsPicker.tsx
++++ b/artifacts/blueprint-clone/src/sections/brands/ApplicationsPicker.tsx
+@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
+ import { APPLICATIONS, Application } from '../../data/applications';
+ import { brandsByApplication } from '../../data/brands';
+ import Pictogram from '../../components/Pictogram';
++import Application3D from '../../components/Application3D';
+ import { useCardReveal, useCardRevealOnChange } from '../../hooks/use-metal-sheen';
+ 
+ interface ApplicationsPickerProps {
+@@ -90,8 +91,8 @@ export default function ApplicationsPicker({ selectedAppId, onSelectApp, onGoToB
+         {/* ── Правая область: активное направление ───────────────────── */}
+         <div className={`apps-stage phase-${phase}`}>
+           <div className="apps-stage-media">
+-            <div className="brand-stage-image">
+-              <img src={displayed.image} alt={displayed.name} decoding="async" />
++            <div className="brand-stage-image apps-stage-3d">
++              <Application3D appId={displayed.id} image={displayed.image} alt={displayed.name} />
+             </div>
+           </div>
+ 

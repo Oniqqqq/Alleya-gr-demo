@@ -1,0 +1,17 @@
+# не загружаем в облако сборки Vercel
+node_modules
+**/dist
+**/tsconfig.tsbuildinfo
+
+# исходные материалы и референсы — в сборке не участвуют
+attached_assets
+app3d-models.patch
+/bizol.png
+/csm_Slider_Meguin_vertriebspartner_Large_6b4048ee0c.webp
+/BRT-LIQUI_MOLY_BLAHST_RACING_-_20263.jpg
+/images.jpeg
+/stand.jpg
+/petrofer.webp
+/lopal.webp
+/reinwell_logo.jpg
+/liquimoly.avif
