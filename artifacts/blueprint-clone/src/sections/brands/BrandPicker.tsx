@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { BRANDS, Brand } from '../../data/brands';
 import { getApplication } from '../../data/applications';
+import Pictogram from '../../components/Pictogram';
+import Barrel3D from '../../components/Barrel3D';
 import { useCardReveal } from '../../hooks/use-metal-sheen';
 
 interface BrandPickerProps {
@@ -9,29 +11,27 @@ interface BrandPickerProps {
 }
 
 /**
- * Блок выбора бренда: слева крупная область активного бренда (60%),
- * справа — вертикальный каталог с собственным нативным скроллом (40%).
- * Смена бренда идёт через направленный clip-path переход изображения
- * и последовательное появление текстовых блоков (те же easing/скорости,
- * что и в остальном проекте).
+ * Шоукейс портфеля брендов: слева — бочка, которая крутится при прокрутке,
+ * делает оборот при смене бренда и перекрашивается в фирменный цвет;
+ * справа — короткая продающая подача; внизу — лента карточек-табов.
  */
 export default function BrandPicker({ selectedBrandId, onSelectBrand }: BrandPickerProps) {
-  // displayed отстаёт от selected на время исходящей анимации
+  // displayed отстаёт от selected на время исходящей анимации текста;
+  // бочка реагирует на selected сразу — цвет и оборот бесшовные
   const [displayed, setDisplayed] = useState<Brand>(
     () => BRANDS.find((b) => b.id === selectedBrandId) ?? BRANDS[0],
   );
   const [phase, setPhase] = useState<'idle' | 'leaving' | 'entering'>('entering');
-  const listRef     = useRef<HTMLDivElement>(null);
-  const listWrapRef = useRef<HTMLDivElement>(null);
-  const sectionRef  = useRef<HTMLElement>(null);
-  const leaveTimer  = useRef(0);
-  const enterTimer  = useRef(0);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const leaveTimer = useRef(0);
+  const enterTimer = useRef(0);
 
-  // Apple-style reveal: data-cards-revealed ставится на контейнер списка
-  // React не трогает data-атрибуты → состояние не сбрасывается при кликах
-  useCardReveal(listWrapRef as React.RefObject<HTMLElement>);
+  const selected = BRANDS.find((b) => b.id === selectedBrandId) ?? BRANDS[0];
+  const selectedIndex = BRANDS.findIndex((b) => b.id === selected.id);
 
-  // Обработка смены выбранного бренда (в т.ч. извне — из блока направлений)
+  useCardReveal(stripRef as React.RefObject<HTMLElement>);
+
+  // Смена бренда: тексты уходят → подменяются → входят каскадом
   useEffect(() => {
     if (selectedBrandId === displayed.id) return;
     const next = BRANDS.find((b) => b.id === selectedBrandId);
@@ -50,8 +50,8 @@ export default function BrandPicker({ selectedBrandId, onSelectBrand }: BrandPic
     leaveTimer.current = window.setTimeout(() => {
       setDisplayed(next);
       setPhase('entering');
-      enterTimer.current = window.setTimeout(() => setPhase('idle'), 1300);
-    }, 420);
+      enterTimer.current = window.setTimeout(() => setPhase('idle'), 1100);
+    }, 380);
 
     return () => {
       clearTimeout(leaveTimer.current);
@@ -59,140 +59,119 @@ export default function BrandPicker({ selectedBrandId, onSelectBrand }: BrandPic
     };
   }, [selectedBrandId, displayed.id]);
 
-  // Первичное появление
   useEffect(() => {
-    enterTimer.current = window.setTimeout(() => setPhase('idle'), 1300);
+    enterTimer.current = window.setTimeout(() => setPhase('idle'), 1100);
     return () => clearTimeout(enterTimer.current);
   }, []);
 
-  // Плавно доводим активную карточку до видимой области списка
-  // (скроллим сам список, не страницу)
+  // Активная карточка плавно доводится до видимой области ленты
   useEffect(() => {
-    const list = listRef.current;
-    if (!list) return;
-    const active = list.querySelector<HTMLElement>('.brand-card.active');
+    const strip = stripRef.current;
+    if (!strip) return;
+    const active = strip.querySelector<HTMLElement>('.brand-card.active');
     if (!active) return;
-    const listRect = list.getBoundingClientRect();
-    const cardRect = active.getBoundingClientRect();
-    if (cardRect.top < listRect.top || cardRect.bottom > listRect.bottom) {
-      list.scrollTo({
-        top: active.offsetTop - list.clientHeight / 2 + active.clientHeight / 2,
-        behavior: 'smooth',
-      });
-    }
+    strip.scrollTo({
+      left: active.offsetLeft - strip.clientWidth / 2 + active.clientWidth / 2,
+      behavior: 'smooth',
+    });
   }, [selectedBrandId]);
+
+  const step = (dir: 1 | -1) => {
+    const next = (selectedIndex + dir + BRANDS.length) % BRANDS.length;
+    onSelectBrand(BRANDS[next].id);
+  };
 
   const scrollToContact = () => {
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
-    <section ref={sectionRef} className="brand-picker" id="brands-picker">
-      <div className="brand-picker-head">
+    <section className="brand-picker" id="brands-picker">
+      <div className="brand-picker-head showcase-head">
         <div className="small-title">Портфель брендов</div>
+        <span className="showcase-counter">
+          {String(selectedIndex + 1).padStart(2, '0')} — {String(BRANDS.length).padStart(2, '0')}
+        </span>
       </div>
 
-      <div className="brand-picker-body">
-        {/* ── Левая область: активный бренд ─────────────────────────── */}
-        <div className={`brand-stage phase-${phase}`}>
-          <div className="brand-stage-media">
-            <div className="brand-stage-image">
-              <img src={displayed.heroImage} alt={displayed.name} decoding="async" />
-            </div>
-            {displayed.gallery.length > 1 && (
-              <div className="brand-stage-thumb">
-                <img src={displayed.gallery[1]} alt="" loading="lazy" decoding="async" />
-              </div>
-            )}
+      <div className="showcase">
+        {/* ── Сцена с бочкой ─────────────────────────────────────────── */}
+        <div className="showcase-scene">
+          <div className="showcase-halo" style={{ background: selected.accent }} aria-hidden="true" />
+          <Barrel3D
+            color={selected.barrelColor}
+            logo={selected.logo}
+            logoAlt={selected.name}
+            spinKey={selected.id}
+          />
+        </div>
+
+        {/* ── Короткая подача ────────────────────────────────────────── */}
+        <div className={`showcase-info phase-${phase}`}>
+          <h3 className="showcase-name seq seq-1">{displayed.name}</h3>
+          <p className="showcase-tagline seq seq-2" style={{ color: displayed.accent }}>
+            {displayed.shortDescription}
+          </p>
+          <p className="showcase-desc seq seq-3">{displayed.fullDescription}</p>
+
+          <div className="showcase-industries seq seq-4">
+            {displayed.applicationIds.map((id) => {
+              const app = getApplication(id);
+              return app ? (
+                <span key={id} className="showcase-industry">
+                  <span className="showcase-industry-icon"><Pictogram icon={app.icon} size="100%" /></span>
+                  <span>{app.name}</span>
+                </span>
+              ) : null;
+            })}
           </div>
 
-          <div className="brand-stage-info">
-            <div className="brand-stage-logo seq seq-1">
-              <img src={displayed.logo} alt={`Логотип ${displayed.name}`} />
-            </div>
+          <div className="showcase-actions seq seq-5">
+            <button className="btn-primary" onClick={scrollToContact}>
+              Обсудить сотрудничество
+            </button>
+            <a className="btn-primary dark" href={displayed.websiteUrl} target="_blank" rel="noreferrer">
+              Сайт бренда ↗
+            </a>
+          </div>
+        </div>
+      </div>
 
-            <h3 className="h3 brand-stage-name seq seq-2">{displayed.name}</h3>
-            <p className="brand-stage-positioning seq seq-2">{displayed.shortDescription}</p>
-            <p className="brand-stage-desc seq seq-3">{displayed.fullDescription}</p>
+      {/* ── Лента карточек-табов ─────────────────────────────────────── */}
+      <div className="brand-strip-wrap">
+        <button className="strip-arrow" onClick={() => step(-1)} aria-label="Предыдущий бренд">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5M11 6l-6 6 6 6" />
+          </svg>
+        </button>
 
-            <div className="brand-stage-features seq seq-4">
-              <span className="brand-stage-caption">Направления применения</span>
-              <div className="brand-stage-tags">
-                {displayed.applicationIds.map((id) => {
+        <div className="brand-strip" ref={stripRef}>
+          {BRANDS.map((brand, index) => (
+            <button
+              key={brand.id}
+              id={`brand-${brand.id}`}
+              className={`brand-card ${brand.id === selectedBrandId ? 'active' : ''}`}
+              style={{ '--reveal-i': index, '--brand-accent': brand.accent } as React.CSSProperties}
+              onClick={() => onSelectBrand(brand.id)}
+              aria-pressed={brand.id === selectedBrandId}
+            >
+              <span className="brand-card-dot" aria-hidden="true" />
+              <span className="brand-card-name">{brand.name}</span>
+              <span className="brand-card-chips">
+                {brand.applicationIds.slice(0, 2).map((id) => {
                   const app = getApplication(id);
-                  return app ? <span key={id} className="brand-tag">{app.name}</span> : null;
+                  return app ? <span key={id} className="brand-chip">{app.name}</span> : null;
                 })}
-              </div>
-            </div>
-
-            <div className="brand-stage-features seq seq-4">
-              <span className="brand-stage-caption">Продукция</span>
-              <div className="brand-stage-tags">
-                {displayed.features.map((f) => (
-                  <span key={f} className="brand-tag dim">{f}</span>
-                ))}
-              </div>
-            </div>
-
-            {displayed.metrics.length > 0 && (
-              <div className="brand-stage-metrics seq seq-5">
-                {displayed.metrics.map((m, i) => (
-                  <div key={i} className="brand-metric">
-                    <span className="brand-metric-value">{m.value}</span>
-                    <span className="brand-metric-label">{m.label}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="brand-stage-actions seq seq-6">
-              <button className="btn-primary" onClick={scrollToContact}>Обсудить сотрудничество</button>
-              <a
-                className="btn-primary dark"
-                href={displayed.websiteUrl}
-                target={displayed.websiteUrl.startsWith('http') ? '_blank' : undefined}
-                rel="noreferrer"
-                onClick={(e) => { if (!displayed.websiteUrl.startsWith('http')) e.preventDefault(); }}
-              >
-                Подробнее
-              </a>
-              {displayed.websiteUrl.startsWith('http') && (
-                <a className="brand-stage-site" href={displayed.websiteUrl} target="_blank" rel="noreferrer">
-                  Сайт бренда ↗
-                </a>
-              )}
-            </div>
-          </div>
+              </span>
+            </button>
+          ))}
         </div>
 
-        {/* ── Правая область: каталог брендов ───────────────────────── */}
-        <div className="brand-list-wrap" ref={listWrapRef}>
-          <div className="brand-list" ref={listRef}>
-            {BRANDS.map((brand, index) => (
-              <button
-                key={brand.id}
-                id={`brand-${brand.id}`}
-                className={`brand-card ${brand.id === selectedBrandId ? 'active' : ''}`}
-                style={{ '--reveal-i': index } as React.CSSProperties}
-                onClick={() => onSelectBrand(brand.id)}
-                aria-pressed={brand.id === selectedBrandId}
-              >
-                <span className="brand-card-preview">
-                  <img src={brand.cardImage} alt="" loading="lazy" decoding="async" />
-                </span>
-                <span className="brand-card-text">
-                  <span className="brand-card-name">{brand.name}</span>
-                  <span className="brand-card-desc">{brand.shortDescription}</span>
-                </span>
-                <span className="brand-card-arrow" aria-hidden="true">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M13 6l6 6-6 6" />
-                  </svg>
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <button className="strip-arrow" onClick={() => step(1)} aria-label="Следующий бренд">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </button>
       </div>
     </section>
   );

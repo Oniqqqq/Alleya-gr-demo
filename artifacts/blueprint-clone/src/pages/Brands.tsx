@@ -9,7 +9,7 @@ import { getApplication, APPLICATIONS } from '../data/applications';
 import { CompanyLocation } from '../data/locations';
 
 export default function BrandsPage() {
-  const [selectedBrandId, setSelectedBrandId] = useState('alleya-group');
+  const [selectedBrandId, setSelectedBrandId] = useState('liqui-moly');
   const [selectedAppId, setSelectedAppId] = useState(APPLICATIONS[0].id);
   const [selectedLocation, setSelectedLocation] = useState<CompanyLocation | null>(null);
   const pendingBrand = useRef(0);

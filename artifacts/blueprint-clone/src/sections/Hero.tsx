@@ -13,43 +13,43 @@ interface HeroPhoto {
 
 const PHOTOS: HeroPhoto[] = [
   {
-    url: img('product-canister.svg'),
+    url: img('hero-liquimoly.png'),
     scrollSpeed: 100, baseX: 308, baseY: -32, width: 300,
-    caption: { name: 'Технические жидкости', desc: '<strong>Собственные бренды</strong> — охлаждающие и специальные жидкости.' },
+    caption: { name: 'LIQUI MOLY', desc: '<strong>Моторные масла и автохимия</strong> — легендарный немецкий бренд.' },
   },
   {
-    url: img('product-bottle.svg'),
+    url: img('hero-bizol.png'),
     scrollSpeed: 400, baseX: 1028, baseY: -2, width: 220,
   },
   {
-    url: img('infra-warehouse.svg'),
+    url: img('hero-reinwell.png'),
     scrollSpeed: 50, baseX: 1186, baseY: 205, width: 240,
-    caption: { name: 'Складская сеть', desc: 'Распределительные центры в ключевых регионах присутствия' },
+    caption: { name: 'ReinWell', desc: 'Немецкий контроль качества, локализованное производство' },
   },
   {
-    url: img('product-filter.svg'),
+    url: img('hero-lopal.png'),
     scrollSpeed: 250, baseX: -16, baseY: 158, width: 220,
   },
   {
-    url: img('product-brake-disc.svg'),
+    url: img('hero-ruseff.png'),
     scrollSpeed: 125, baseX: 111, baseY: 446, width: 280,
-    caption: { name: 'Автокомпоненты', desc: '<strong>Детали шасси</strong> — тормозные системы и подвеска' },
+    caption: { name: 'RUSEFF', desc: '<strong>Автохимия и автокосметика</strong>, созданная для российских условий' },
   },
   {
-    url: img('infra-truck.svg'),
+    url: img('hero-portfolio.png'),
     scrollSpeed: 25, baseX: 862, baseY: 609, width: 340,
   },
   {
-    url: img('product-drum.svg'),
+    url: img('hero-lubex.png'),
     scrollSpeed: 325, baseX: 237, baseY: 706, width: 260,
   },
   {
-    url: img('infra-production.svg'),
+    url: img('infra-warehouse.svg'),
     scrollSpeed: 90, baseX: 593, baseY: 965, width: 300,
-    caption: { name: 'Производство', desc: '<strong>Производственные площадки</strong> и контроль качества' },
+    caption: { name: '11 филиалов', desc: '<strong>Работа по всей территории РФ</strong> — собственная филиальная сеть' },
   },
   {
-    url: img('product-battery.svg'),
+    url: img('hero-reinwell-spray.png'),
     scrollSpeed: 250, baseX: 1107, baseY: 1050, width: 200,
   },
 ];
@@ -309,9 +309,9 @@ export default function Hero() {
             letterSpacing: '-0.01em',
           }}
         >
-          Аллея Групп объединяет сильные бренды,<br />
-          развитую систему поставок и поддержку продаж<br />
-          на всей территории присутствия.
+          Системная дистрибуция смазочных материалов<br />
+          и автохимии от ведущих мировых производителей —<br />
+          11 собственных филиалов по всей России.
         </p>
       </div>
 
