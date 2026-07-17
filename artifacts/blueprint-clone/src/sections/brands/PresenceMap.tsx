@@ -162,7 +162,7 @@ export default function PresenceMap({ onSelectLocation }: PresenceMapProps) {
       <div className="map-wrap">
         <div ref={containerRef} className="map-container" aria-label="Интерактивная карта присутствия" />
 
-        <button className="map-reset btn-primary dark" onClick={resetView}>
+        <button className="map-reset" onClick={resetView}>
           Общий масштаб
         </button>
 

@@ -22,9 +22,9 @@ const PHOTOS: HeroPhoto[] = [
     scrollSpeed: 400, baseX: 1160, baseY: -2, width: 220,
   },
   {
-    url: img('hero-reinwell.png'),
-    scrollSpeed: 50, baseX: 1360, baseY: 205, width: 240,
-    caption: { name: 'ReinWell', desc: 'Немецкий контроль качества, локализованное производство' },
+    url: img('lm-banner.jpg'),
+    scrollSpeed: 50, baseX: 1400, baseY: 205, width: 240,
+    caption: { name: 'Масла и присадки', desc: '<strong>Флагман портфеля</strong> — от моторных масел до сервисной химии' },
   },
   {
     url: img('meguin-drum.jpg'),

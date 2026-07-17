@@ -129,8 +129,9 @@ export default function Barrel3D({ color, logo, logoAlt, spinKey }: Barrel3DProp
     scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
     const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 30);
-    camera.position.set(0, 1.1, 8.4);
-    camera.lookAt(0, -0.02, 0);
+    // запас по кадру: бочка с наклоном и «дыханием» никогда не касается краёв
+    camera.position.set(0, 1.05, 9.4);
+    camera.lookAt(0, 0, 0);
 
     const key = new THREE.DirectionalLight(0xffffff, 0.9);
     key.position.set(3.5, 5, 4);
