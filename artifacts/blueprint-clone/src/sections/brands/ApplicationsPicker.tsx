@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { APPLICATIONS, Application } from '../../data/applications';
 import { brandsByApplication } from '../../data/brands';
 import Pictogram from '../../components/Pictogram';
+import Application3D from '../../components/Application3D';
 import { useCardReveal, useCardRevealOnChange } from '../../hooks/use-metal-sheen';
 
 interface ApplicationsPickerProps {
@@ -90,8 +91,8 @@ export default function ApplicationsPicker({ selectedAppId, onSelectApp, onGoToB
         {/* ── Правая область: активное направление ───────────────────── */}
         <div className={`apps-stage phase-${phase}`}>
           <div className="apps-stage-media">
-            <div className="brand-stage-image">
-              <img src={displayed.image} alt={displayed.name} decoding="async" />
+            <div className="brand-stage-image apps-stage-3d">
+              <Application3D appId={displayed.id} image={displayed.image} alt={displayed.name} />
             </div>
           </div>
 
