@@ -1,17 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import BrandPicker from '../sections/brands/BrandPicker';
 import ApplicationsPicker from '../sections/brands/ApplicationsPicker';
-import PresenceMap from '../sections/brands/PresenceMap';
 import ContactSection from '../sections/ContactSection';
 import Footer from '../sections/Footer';
 import { getBrand } from '../data/brands';
 import { getApplication, APPLICATIONS } from '../data/applications';
-import { CompanyLocation } from '../data/locations';
 
 export default function BrandsPage() {
   const [selectedBrandId, setSelectedBrandId] = useState('liqui-moly');
   const [selectedAppId, setSelectedAppId] = useState(APPLICATIONS[0].id);
-  const [selectedLocation, setSelectedLocation] = useState<CompanyLocation | null>(null);
   const pendingBrand = useRef(0);
 
   // Переход «направление → бренд»: сначала плавная прокрутка к блоку
@@ -70,13 +67,10 @@ export default function BrandsPage() {
         onGoToBrand={goToBrand}
       />
 
-      <PresenceMap onSelectLocation={setSelectedLocation} />
-
       <ContactSection
         context={{
           brand: selectedBrand?.name,
           application: selectedApp?.name,
-          location: selectedLocation ? `${selectedLocation.name}, ${selectedLocation.city}` : undefined,
         }}
       />
 

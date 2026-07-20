@@ -3,6 +3,7 @@ import { BRANDS, Brand } from '../../data/brands';
 import { getApplication } from '../../data/applications';
 import Pictogram from '../../components/Pictogram';
 import Barrel3D from '../../components/Barrel3D';
+import HonestSignBadge from '../../components/HonestSignBadge';
 import { useCardReveal } from '../../hooks/use-metal-sheen';
 
 interface BrandPickerProps {
@@ -114,6 +115,8 @@ export default function BrandPicker({ selectedBrandId, onSelectBrand }: BrandPic
           </p>
           <p className="showcase-desc seq seq-3">{displayed.fullDescription}</p>
 
+          <HonestSignBadge className="seq seq-3" />
+
           <div className="showcase-industries seq seq-4">
             {displayed.applicationIds.map((id) => {
               const app = getApplication(id);
@@ -163,6 +166,7 @@ export default function BrandPicker({ selectedBrandId, onSelectBrand }: BrandPic
                   return app ? <span key={id} className="brand-chip">{app.name}</span> : null;
                 })}
               </span>
+              <HonestSignBadge className="compact" />
             </button>
           ))}
         </div>

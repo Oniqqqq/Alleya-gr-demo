@@ -6,7 +6,7 @@ const NAV_ITEMS: { label: string; href: string }[] = [
   { label: 'О компании', href: '/#about' },
   { label: 'Бренды', href: '/brands' },
   { label: 'Направления', href: '/brands#applications' },
-  { label: 'Филиалы', href: '/brands#map' },
+  { label: 'Филиалы', href: '/#map' },
   { label: 'Контакты', href: '/#contact' },
 ];
 

@@ -7,7 +7,7 @@ const SITE_LINKS = [
   { label: 'Главная', href: '/' },
   { label: 'О компании', href: '/#about' },
   { label: 'Портфель брендов', href: '/brands' },
-  { label: 'Карта присутствия', href: '/brands#map' },
+  { label: 'Карта присутствия', href: '/#map' },
   { label: 'Контакты', href: '/#contact' },
 ];
 
@@ -51,7 +51,7 @@ export default function Footer() {
           <span className="footer-col-title">Контакты</span>
           <a href="tel:+74950000000" className="footer-link">+7 (495) 000-00-00</a>
           <a href="mailto:info@alleya-group.ru" className="footer-link">info@alleya-group.ru</a>
-          <Link href="/brands#map" className="footer-link">Филиалы на карте</Link>
+          <Link href="/#map" className="footer-link">Филиалы на карте</Link>
         </div>
       </div>
 
